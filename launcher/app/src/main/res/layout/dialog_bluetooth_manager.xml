@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogBackdrop"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#D9080B10">
+
+    <LinearLayout
+        android:layout_width="640dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:background="@drawable/glass_panel"
+        android:paddingStart="26dp"
+        android:paddingEnd="26dp"
+        android:paddingTop="22dp"
+        android:paddingBottom="24dp"
+        android:elevation="24dp">
+
+        <!-- Header -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BLUETOOTH ACCESSORIES"
+                    android:textColor="#00FF66"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/outfit_medium"
+                    android:letterSpacing="0.12" />
+
+                <TextView
+                    android:id="@+id/btStatusText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Manage remotes, headphones and controllers"
+                    android:textColor="#8CFFFFFF"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/outfit" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/btnPairNew"
+                style="@style/TopButton"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:text="Pair New Device"
+                android:textColor="#00FF66"
+                android:drawableStart="@drawable/ic_bluetooth"
+                android:background="@drawable/pill_bg"
+                android:focusable="true"
+                android:clickable="true" />
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
+            android:text="PAIRED DEVICES"
+            android:textColor="#66FFFFFF"
+            android:textSize="11sp"
+            android:fontFamily="@font/outfit_medium"
+            android:letterSpacing="0.15" />
+
+        <!-- Paired Devices List -->
+        <LinearLayout
+            android:id="@+id/pairedDevicesContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/noBtDevices"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:gravity="center"
+            android:text="No paired accessories found"
+            android:textColor="#8CFFFFFF"
+            android:textSize="14sp"
+            android:fontFamily="@font/outfit"
+            android:visibility="gone" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="[OK] Select device   •   [Back] Return to Home"
+            android:textColor="#66FFFFFF"
+            android:textSize="12sp"
+            android:fontFamily="@font/outfit" />
+    </LinearLayout>
+</FrameLayout>

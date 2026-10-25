@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lockRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E6050B14">
+
+    <!-- Atmospheric radial glow -->
+    <ImageView
+        android:id="@+id/lockBg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/wallpaper_aurora_horizon"
+        android:alpha="0.45" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingTop="36dp">
+
+        <!-- Top Header: macOS Style Clock & Date -->
+        <TextClock
+            android:id="@+id/lockClock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:format12Hour="h:mm"
+            android:format24Hour="HH:mm"
+            android:textColor="#FFFFFFFF"
+            android:textSize="64sp"
+            android:fontFamily="@font/outfit_light"
+            android:letterSpacing="-0.03"
+            android:includeFontPadding="false" />
+
+        <TextClock
+            android:id="@+id/lockDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:format12Hour="EEEE, MMMM d"
+            android:format24Hour="EEEE, MMMM d"
+            android:textColor="#B3FFFFFF"
+            android:textSize="18sp"
+            android:fontFamily="@font/outfit_regular"
+            android:letterSpacing="0.05" />
+
+        <!-- macOS Center Glass Auth Card -->
+        <LinearLayout
+            android:id="@+id/lockCard"
+            android:layout_width="380dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:background="@drawable/glass_card_bg"
+            android:padding="24dp">
+
+            <!-- User Avatar Circle -->
+            <FrameLayout
+                android:layout_width="68dp"
+                android:layout_height="68dp"
+                android:background="@drawable/glass_pill_bg">
+
+                <TextView
+                    android:id="@+id/userInitial"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="N"
+                    android:textColor="#FF00E5FF"
+                    android:textSize="28sp"
+                    android:fontFamily="@font/outfit_medium" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/lockUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="NITISH"
+                android:textColor="#FFFFFFFF"
+                android:textSize="20sp"
+                android:fontFamily="@font/outfit_medium"
+                android:letterSpacing="0.05" />
+
+            <!-- PIN masked dots display -->
+            <TextView
+                android:id="@+id/lockPinDisplay"
+                android:layout_width="220dp"
+                android:layout_height="44dp"
+                android:layout_marginTop="14dp"
+                android:gravity="center"
+                android:background="@drawable/glass_pill_bg"
+                android:hint="Enter PIN"
+                android:textColorHint="#66FFFFFF"
+                android:textColor="#FF00E5FF"
+                android:textSize="22sp"
+                android:fontFamily="@font/outfit_medium"
+                android:letterSpacing="0.3" />
+
+            <TextView
+                android:id="@+id/lockStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Use remote D-pad to enter PIN"
+                android:textColor="#99FFFFFF"
+                android:textSize="12sp"
+                android:fontFamily="@font/outfit_regular" />
+
+            <!-- TV Remote D-pad On-Screen Numeric Keypad -->
+            <GridLayout
+                android:id="@+id/keypadGrid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:columnCount="3"
+                android:rowCount="4">
+
+                <!-- Row 1 -->
+                <Button android:id="@+id/btnKey1" style="@style/TopButton" android:layout_margin="3dp" android:text="1" />
+                <Button android:id="@+id/btnKey2" style="@style/TopButton" android:layout_margin="3dp" android:text="2" />
+                <Button android:id="@+id/btnKey3" style="@style/TopButton" android:layout_margin="3dp" android:text="3" />
+
+                <!-- Row 2 -->
+                <Button android:id="@+id/btnKey4" style="@style/TopButton" android:layout_margin="3dp" android:text="4" />
+                <Button android:id="@+id/btnKey5" style="@style/TopButton" android:layout_margin="3dp" android:text="5" />
+                <Button android:id="@+id/btnKey6" style="@style/TopButton" android:layout_margin="3dp" android:text="6" />
+
+                <!-- Row 3 -->
+                <Button android:id="@+id/btnKey7" style="@style/TopButton" android:layout_margin="3dp" android:text="7" />
+                <Button android:id="@+id/btnKey8" style="@style/TopButton" android:layout_margin="3dp" android:text="8" />
+                <Button android:id="@+id/btnKey9" style="@style/TopButton" android:layout_margin="3dp" android:text="9" />
+
+                <!-- Row 4 -->
+                <Button android:id="@+id/btnKeyClear" style="@style/TopButton" android:layout_margin="3dp" android:text="⌫" android:textColor="#FFFF5252" />
+                <Button android:id="@+id/btnKey0" style="@style/TopButton" android:layout_margin="3dp" android:text="0" />
+                <Button android:id="@+id/btnKeyUnlock" style="@style/TopButton" android:layout_margin="3dp" android:text="➔" android:textColor="#FF00E5FF" />
+            </GridLayout>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

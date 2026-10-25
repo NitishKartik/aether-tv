@@ -1,0 +1,10 @@
+﻿package:com.internet.tvbrowser
+package:org.smarttube.stable
+package:com.spotify.tv.android
+package:nextapp.fx
+package:com.sonyliv
+package:org.localsend.localsend_app
+package:in.startv.hotstar
+package:org.adaway
+package:org.chromium.webapk.a4474cd6fdf95db5e_v2
+package:systems.sieber.fsclock

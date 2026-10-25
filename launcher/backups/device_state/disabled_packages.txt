@@ -1,0 +1,8 @@
+﻿package:com.android.cts.priv.ctsshim
+package:com.xm.webcontent
+package:tv.alphonso.alphonso_eula
+package:com.android.printspooler
+package:com.google.android.feedback
+package:com.google.android.tv.bugreportsender
+package:com.miui.tv.analytics
+package:com.android.cts.ctsshim

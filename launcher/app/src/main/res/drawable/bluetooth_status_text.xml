@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Focused on light background: deep rich green (WCAG AAA contrast > 6:1) -->
+    <item android:state_focused="true" android:color="#006622" />
+    <!-- Normal on dark glass: bright neon green -->
+    <item android:color="#00FF66" />
+</selector>

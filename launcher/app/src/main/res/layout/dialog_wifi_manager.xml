@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogBackdrop"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#D9080B10">
+
+    <LinearLayout
+        android:layout_width="640dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:background="@drawable/glass_panel"
+        android:paddingStart="26dp"
+        android:paddingEnd="26dp"
+        android:paddingTop="22dp"
+        android:paddingBottom="24dp"
+        android:elevation="24dp">
+
+        <!-- Header -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="WI-FI NETWORK MANAGER"
+                    android:textColor="#00FF66"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/outfit_medium"
+                    android:letterSpacing="0.12" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Connection status, IP address and network controls"
+                    android:textColor="#8CFFFFFF"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/outfit" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/btnWifiSettings"
+                style="@style/TopButton"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:text="Wi-Fi Settings"
+                android:textColor="#00FF66"
+                android:drawableStart="@drawable/ic_wifi"
+                android:background="@drawable/pill_bg"
+                android:focusable="true"
+                android:clickable="true" />
+        </RelativeLayout>
+
+        <!-- Current Active Connection Card -->
+        <LinearLayout
+            android:id="@+id/activeNetworkCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/tile_bg"
+            android:padding="16dp"
+            android:focusable="true"
+            android:clickable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/currentSsid"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Connected Network"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/outfit_medium" />
+
+                <TextView
+                    android:id="@+id/connectionBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Connected"
+                    android:textColor="#00FF66"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/outfit_medium" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/ipAddressText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="IP: --"
+                    android:textColor="#B3FFFFFF"
+                    android:textSize="13sp"
+                    android:fontFamily="@font/outfit" />
+
+                <TextView
+                    android:id="@+id/linkSpeedText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Speed: --"
+                    android:textColor="#B3FFFFFF"
+                    android:textSize="13sp"
+                    android:fontFamily="@font/outfit" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/signalStrengthText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Signal: Excellent"
+                android:textColor="#8CFFFFFF"
+                android:textSize="13sp"
+                android:fontFamily="@font/outfit" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="[OK] Advanced Configuration   •   [Back] Return to Home"
+            android:textColor="#66FFFFFF"
+            android:textSize="12sp"
+            android:fontFamily="@font/outfit" />
+    </LinearLayout>
+</FrameLayout>

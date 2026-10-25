@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F2050914">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="44dp"
+        android:paddingEnd="44dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="20dp">
+
+        <!-- Header -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/ccTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Aether TV Control Center"
+                android:textColor="#FFFFFFFF"
+                android:textSize="26sp"
+                android:fontFamily="@font/outfit_light"
+                android:letterSpacing="-0.01" />
+
+            <Button
+                android:id="@+id/btnCloseCC"
+                style="@style/TopButton"
+                android:layout_alignParentEnd="true"
+                android:text="Close" />
+        </RelativeLayout>
+
+        <!-- 2-Pane Layout -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <!-- Left Rail: Categories -->
+            <LinearLayout
+                android:id="@+id/ccNavRail"
+                android:layout_width="260dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/glass_card_bg"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <Button android:id="@+id/catDisplay" style="@style/TopButton" android:layout_width="match_parent" android:layout_margin="3dp" android:text="📺 Display &amp; Visuals" android:textColor="#FF00E5FF" />
+                <Button android:id="@+id/catSound" style="@style/TopButton" android:layout_width="match_parent" android:layout_margin="3dp" android:text="🔊 Sound &amp; Audio" />
+                <Button android:id="@+id/catNetwork" style="@style/TopButton" android:layout_width="match_parent" android:layout_margin="3dp" android:text="🌐 Network &amp; DNS" />
+                <Button android:id="@+id/catApps" style="@style/TopButton" android:layout_width="match_parent" android:layout_margin="3dp" android:text="📱 Applications" />
+                <Button android:id="@+id/catDevice" style="@style/TopButton" android:layout_width="match_parent" android:layout_margin="3dp" android:text="⚡ Device Diagnostics" />
+                <Button android:id="@+id/catScenes" style="@style/TopButton" android:layout_width="match_parent" android:layout_margin="3dp" android:text="🌅 Day/Night Scene" />
+            </LinearLayout>
+
+            <!-- Right Content Area -->
+            <FrameLayout
+                android:id="@+id/ccContentArea"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/glass_card_bg"
+                android:padding="20dp">
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:id="@+id/ccPanelContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/panelHeaderTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Display &amp; Visual Settings"
+                            android:textColor="#FFFFFFFF"
+                            android:textSize="20sp"
+                            android:fontFamily="@font/outfit_medium" />
+
+                        <TextView
+                            android:id="@+id/panelDescription"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Manage TV screen resolution, screensaver timers, and ambient glass transparency."
+                            android:textColor="#99FFFFFF"
+                            android:textSize="13sp"
+                            android:fontFamily="@font/outfit_regular" />
+
+                        <!-- Dynamic Control Rows Container -->
+                        <LinearLayout
+                            android:id="@+id/panelActionsContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:orientation="vertical" />
+                    </LinearLayout>
+                </ScrollView>
+            </FrameLayout>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

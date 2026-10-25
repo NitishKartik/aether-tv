@@ -29,9 +29,11 @@
     <!-- Icon-only pill: a 42dp circle (pill_bg's 21dp corners) with the 22dp icon centred by even padding. Give it a
          contentDescription, since there is no text. -->
     <style name="TopButtonIcon" parent="TopButtonBase">
-        <item name="android:layout_width">42dp</item>
-        <item name="android:paddingStart">10dp</item>
-        <item name="android:paddingEnd">10dp</item>
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_marginStart">4dp</item>
+        <item name="android:paddingStart">9dp</item>
+        <item name="android:paddingEnd">9dp</item>
         <item name="android:drawablePadding">0dp</item>
     </style>
 

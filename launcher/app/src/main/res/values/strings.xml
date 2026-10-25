@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Home</string>
+    <string name="app_name">Aether TV</string>
+    <string name="jarvis_assistant">Jarvis</string>
+    <string name="ai_dashboard">AI Dashboard</string>
+    <string name="cinema_entertainment">Cinema</string>
+    <string name="orbital_defender">Orbital Defender</string>
+    <string name="adguard_dns">AdGuard DNS</string>
+    <string name="control_center">Control Center</string>
+    <string name="lock_tv">Lock TV</string>
     <string name="inputs">Inputs</string>
     <string name="wifi">Wi-Fi</string>
     <string name="settings">Settings</string>
@@ -21,7 +28,7 @@
     <string name="offline">Offline</string>
     <string name="not_available">Not available on this TV</string>
     <string name="cant_open">Can\'t open %1$s</string>
-    <string name="date_format">EEEE  d MMMM</string>
+    <string name="date_format">EEEE, d MMMM</string>
     <!-- Date next to the clock on Home; a locale can split it over two lines with \n. -->
     <string name="date_format_home" translatable="false">@string/date_format</string>
     <string name="shamsi_month_farvardin">Farvardin</string>
@@ -106,6 +113,10 @@
     <string name="reorder_not_saved">Couldn\'t save the new order</string>
     <string name="app_library">App library</string>
     <string name="library_empty">No launchable apps found</string>
+    <string name="clean_all_apps">Clean All Apps</string>
+    <string name="clean_app">Close App</string>
+    <string name="no_recent_apps">No active background apps</string>
+    <string name="apps_cleaned_toast">Background apps cleared · Memory boosted</string>
     <string name="library_on_home">On Home</string>
     <string name="library_add_home">Add to Home</string>
     <string name="library_remove_shortcut">Remove from Home</string>

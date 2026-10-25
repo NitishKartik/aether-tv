@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E6020610">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingTop="28dp"
+        android:paddingBottom="24dp">
+
+        <!-- Top Assistant Banner -->
+        <TextView
+            android:id="@+id/jarvisHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="JARVIS // AETHER TV AI ASSISTANT"
+            android:textColor="#FF00E5FF"
+            android:textSize="18sp"
+            android:fontFamily="@font/outfit_medium"
+            android:letterSpacing="0.2" />
+
+        <!-- Holographic Orbital Animation -->
+        <com.gathin.tvhome.JarvisView
+            android:id="@+id/jarvisOrbitalView"
+            android:layout_width="260dp"
+            android:layout_height="260dp"
+            android:layout_marginTop="16dp" />
+
+        <!-- State & Speech Response Text -->
+        <TextView
+            android:id="@+id/jarvisStateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="READY // STANDBY"
+            android:textColor="#FFFFFFFF"
+            android:textSize="18sp"
+            android:fontFamily="@font/outfit_medium"
+            android:letterSpacing="0.1" />
+
+        <TextView
+            android:id="@+id/jarvisResponseText"
+            android:layout_width="520dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:background="@drawable/glass_card_bg"
+            android:padding="12dp"
+            android:text="Good day, Nitish. How can I assist you with your Mi Box 4?"
+            android:textColor="#D9FFFFFF"
+            android:textSize="15sp"
+            android:fontFamily="@font/outfit_regular" />
+
+        <!-- Mic Trigger & Quick Actions -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnMicTrigger"
+                style="@style/TopButton"
+                android:text="● Speak Now"
+                android:textColor="#FF00E676" />
+
+            <Button
+                android:id="@+id/btnCmdGame"
+                style="@style/TopButton"
+                android:text="🎮 Play Game" />
+
+            <Button
+                android:id="@+id/btnCmdAi"
+                style="@style/TopButton"
+                android:text="📊 AI Usage" />
+
+            <Button
+                android:id="@+id/btnCmdDns"
+                style="@style/TopButton"
+                android:text="🛡️ AdGuard DNS" />
+
+            <Button
+                android:id="@+id/btnCmdLock"
+                style="@style/TopButton"
+                android:text="🔒 Lock TV" />
+
+            <Button
+                android:id="@+id/btnCloseJarvis"
+                style="@style/TopButton"
+                android:text="Close" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

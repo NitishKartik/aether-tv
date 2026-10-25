@@ -165,11 +165,12 @@
 
             <LinearLayout
                 android:id="@+id/leftBlock"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_toStartOf="@+id/topButtons"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="4dp"
+                android:minWidth="340dp"
                 android:orientation="vertical">
 
                 <!-- The header texts use gravity left, not start: the launcher lays out left to right
@@ -227,8 +228,8 @@
                         android:layout_width="1dp"
                         android:layout_height="26dp"
                         android:layout_gravity="bottom"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
                         android:background="#33FFFFFF" />
 
@@ -267,9 +268,9 @@
                             android:format12Hour="@string/date_format_home"
                             android:format24Hour="@string/date_format_home"
                             android:textColor="#A6FFFFFF"
-                            android:textSize="14sp"
+                            android:textSize="12.5sp"
                             android:fontFamily="@string/font_regular"
-                            android:letterSpacing="0.14"
+                            android:letterSpacing="0.02"
                             android:textAllCaps="true" />
 
                         <!-- Lunar date ("Lunar 13/9 · Year of the Horse"), shown when lunar_date is on. -->
@@ -323,16 +324,66 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/btnJarvis"
+                    style="@style/TopButtonIcon"
+                    android:contentDescription="@string/jarvis_assistant"
+                    android:drawableStart="@drawable/ic_jarvis"
+                    android:nextFocusDown="@+id/grid" />
+
+                <TextView
+                    android:id="@+id/btnAiDashboard"
+                    style="@style/TopButtonIcon"
+                    android:contentDescription="@string/ai_dashboard"
+                    android:drawableStart="@drawable/ic_ai_dashboard"
+                    android:nextFocusDown="@+id/grid" />
+
+                <TextView
+                    android:id="@+id/btnCinema"
+                    style="@style/TopButtonIcon"
+                    android:contentDescription="@string/cinema_entertainment"
+                    android:drawableStart="@drawable/ic_cinema"
+                    android:nextFocusDown="@+id/grid" />
+
+                <TextView
+                    android:id="@+id/btnGame"
+                    style="@style/TopButtonIcon"
+                    android:contentDescription="@string/orbital_defender"
+                    android:drawableStart="@drawable/ic_game"
+                    android:nextFocusDown="@+id/grid" />
+
+                <TextView
+                    android:id="@+id/btnAdGuard"
+                    style="@style/TopButtonIcon"
+                    android:contentDescription="@string/adguard_dns"
+                    android:drawableStart="@drawable/ic_dns"
+                    android:nextFocusDown="@+id/grid" />
+
+                <TextView
+                    android:id="@+id/btnControlCenter"
+                    style="@style/TopButtonIcon"
+                    android:contentDescription="@string/control_center"
+                    android:drawableStart="@drawable/ic_control_center"
+                    android:nextFocusDown="@+id/grid" />
+
+                <TextView
+                    android:id="@+id/btnLock"
+                    style="@style/TopButtonIcon"
+                    android:contentDescription="@string/lock_tv"
+                    android:drawableStart="@drawable/ic_lock_macos"
+                    android:nextFocusDown="@+id/grid" />
+
+                <TextView
                     android:id="@+id/btnInputs"
                     style="@style/TopButton"
                     android:text="@string/inputs"
                     android:drawableStart="@drawable/ic_input"
+                    android:visibility="gone"
                     android:nextFocusDown="@+id/grid" />
 
                 <TextView
                     android:id="@+id/btnWifi"
                     style="@style/TopButton"
-                    android:maxWidth="180dp"
+                    android:maxWidth="160dp"
                     android:singleLine="true"
                     android:ellipsize="end"
                     android:text="@string/wifi"
@@ -350,6 +401,7 @@
                 <TextView
                     android:id="@+id/btnReorder"
                     style="@style/TopButtonIcon"
+                    android:visibility="gone"
                     android:contentDescription="@string/reorder"
                     android:drawableStart="@drawable/ic_swap_vert"
                     android:nextFocusDown="@+id/grid" />

@@ -174,6 +174,17 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private boolean heroShown;
     private boolean animations;
     private boolean advancedEffects;
+    private SceneManager sceneManager;
+    private LockManager lockManager;
+    private AiUsageManager aiUsageManager;
+    private EntertainmentManager entertainmentManager;
+    private View btnJarvis;
+    private View btnAiDashboard;
+    private View btnCinema;
+    private View btnGame;
+    private View btnAdGuard;
+    private View btnControlCenter;
+    private View btnLock;
     private TextView greeting;
     private View clockBlock;
     private View btnInputs;
@@ -700,9 +711,56 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             }
         }
 
+        sceneManager = new SceneManager(this);
+        lockManager = new LockManager(this);
+        aiUsageManager = new AiUsageManager(this);
+        entertainmentManager = new EntertainmentManager(this);
+
+        btnJarvis = findViewById(R.id.btnJarvis);
+        btnAiDashboard = findViewById(R.id.btnAiDashboard);
+        btnCinema = findViewById(R.id.btnCinema);
+        btnGame = findViewById(R.id.btnGame);
+        btnAdGuard = findViewById(R.id.btnAdGuard);
+        btnControlCenter = findViewById(R.id.btnControlCenter);
+        btnLock = findViewById(R.id.btnLock);
+
+        if (btnJarvis != null) {
+            btnJarvis.setOnClickListener(v -> new JarvisAssistantDialog(this, new JarvisAssistantDialog.AssistantActionListener() {
+                @Override public void onOpenGame() { new OrbitalDefenderDialog(MainActivity.this).show(); }
+                @Override public void onOpenAiDashboard() { new AiDashboardDialog(MainActivity.this, aiUsageManager).show(); }
+                @Override public void onOpenAdGuardDns() { new AdGuardDnsDialog(MainActivity.this).show(); }
+                @Override public void onLockTv() { lockTv(); }
+                @Override public void onOpenSettings() { new ControlCenterDialog(MainActivity.this, sceneManager, lockManager).show(); }
+            }).show());
+        }
+
+        if (btnAiDashboard != null) {
+            btnAiDashboard.setOnClickListener(v -> new AiDashboardDialog(this, aiUsageManager).show());
+        }
+
+        if (btnCinema != null) {
+            btnCinema.setOnClickListener(v -> new EntertainmentDialog(this, entertainmentManager).show());
+        }
+
+        if (btnGame != null) {
+            btnGame.setOnClickListener(v -> new OrbitalDefenderDialog(this).show());
+        }
+
+        if (btnAdGuard != null) {
+            btnAdGuard.setOnClickListener(v -> new AdGuardDnsDialog(this).show());
+        }
+
+        if (btnControlCenter != null) {
+            btnControlCenter.setOnClickListener(v -> new ControlCenterDialog(this, sceneManager, lockManager).show());
+        }
+
+        if (btnLock != null) {
+            btnLock.setOnClickListener(v -> lockTv());
+        }
+
         btnInputs = findViewById(R.id.btnInputs);
         View btnSettings = findViewById(R.id.btnSettings);
-        btnInputs.setOnClickListener(v -> showInputs());
+        if (btnInputs != null) btnInputs.setOnClickListener(v -> showInputs());
         btnWifi.setOnClickListener(v -> openNetworkPill());
         btnVpn.setOnClickListener(v -> openVpnPill());
         btnWifi.setOnLongClickListener(v -> {
@@ -789,7 +847,14 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) return v.getId() == leftButton;
             return keyCode == KeyEvent.KEYCODE_DPAD_RIGHT && v.getId() == rightButton;
         };
-        btnInputs.setOnKeyListener(pillKeys);
+        if (btnJarvis != null) btnJarvis.setOnKeyListener(pillKeys);
+        if (btnAiDashboard != null) btnAiDashboard.setOnKeyListener(pillKeys);
+        if (btnCinema != null) btnCinema.setOnKeyListener(pillKeys);
+        if (btnGame != null) btnGame.setOnKeyListener(pillKeys);
+        if (btnAdGuard != null) btnAdGuard.setOnKeyListener(pillKeys);
+        if (btnControlCenter != null) btnControlCenter.setOnKeyListener(pillKeys);
+        if (btnLock != null) btnLock.setOnKeyListener(pillKeys);
+        if (btnInputs != null) btnInputs.setOnKeyListener(pillKeys);
         btnWifi.setOnKeyListener(pillKeys);
         btnVpn.setOnKeyListener(pillKeys);
         btnSettings.setOnKeyListener(pillKeys);
@@ -797,12 +862,17 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         btnLibraryTop.setOnKeyListener(pillKeys);
         for (View button : topAppButtons) button.setOnKeyListener(pillKeys);
         if (advancedEffects) {
-            List<View> pills = new ArrayList<>(Arrays.asList(btnInputs, btnWifi, btnVpn, btnReorder, btnLibraryTop, btnSettings));
+            List<View> pills = new ArrayList<>(Arrays.asList(
+                btnJarvis, btnAiDashboard, btnCinema, btnGame, btnAdGuard, btnControlCenter, btnLock,
+                btnInputs, btnWifi, btnVpn, btnReorder, btnLibraryTop, btnSettings
+            ));
             pills.addAll(topAppButtons);
             for (View button : pills) {
-                button.setOnFocusChangeListener((view, focused) -> view.animate()
-                        .scaleX(focused ? 1.04f : 1f).scaleY(focused ? 1.04f : 1f)
-                        .setDuration(reducedMotion ? Motion.REDUCED_MS : 160).start());
+                if (button != null) {
+                    button.setOnFocusChangeListener((view, focused) -> view.animate()
+                            .scaleX(focused ? 1.04f : 1f).scaleY(focused ? 1.04f : 1f)
+                            .setDuration(reducedMotion ? Motion.REDUCED_MS : 160).start());
+                }
             }
         }
         if (festive) applyFestiveSkin((TextView) btnInputs, (TextView) btnSettings);
@@ -937,6 +1007,12 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     @Override
     protected void onResume() {
         super.onResume();
+        if (lockManager != null && lockManager.isCurrentlyLocked()) {
+            showLockScreen();
+        }
+        if (sceneManager != null) {
+            applyAetherScene(sceneManager.getCurrentScene());
+        }
         // A festival that started or ended while Home was in the background: rebuild with or without it.
         if (festive != festival.active(LocalDate.now())) {
             recreate();
@@ -2510,6 +2586,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (!festiveGreeting.isEmpty()) {
             greeting.setText(festiveGreeting);
             greeting.setTextColor(liftTowardsWhite(festival.accentColor(), 0.25f));
+        } else if (sceneManager != null) {
+            greeting.setText(sceneManager.getGreetingText());
+            greeting.setTextColor(sceneManager.getPrimaryAccentColor(sceneManager.getCurrentScene()));
         } else {
             greeting.setText(greetingName.isEmpty() ? getString(res)
                     : getString(R.string.greeting_with_name, getString(res), greetingName));
@@ -2517,6 +2596,16 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         }
         if (shamsi) shamsiDate.setText(Shamsi.today(getResources()));
         if (lunar) lunarDate.setText(Lunar.today(getResources(), lunarOffset));
+    }
+
+    public void applyAetherScene(SceneManager.Scene scene) {
+        if (greeting != null && sceneManager != null) {
+            greeting.setText(sceneManager.getGreetingText());
+            greeting.setTextColor(sceneManager.getPrimaryAccentColor(scene));
+        }
+        if (sceneManager != null && glassAccent != 0) {
+            glassAccent = sceneManager.getPrimaryAccentColor(scene);
+        }
     }
 
     // ---- race-weekend panel (a theme's race_calendar) -----------------------------------------------
@@ -2780,6 +2869,18 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private void openNetworkPill() {
         Intent i = vpnPill ? null : vpnAppIntent();
         open(i != null ? i : systemIntent(Settings.ACTION_WIFI_SETTINGS));
+    }
+
+    private void lockTv() {
+        if (lockManager == null) return;
+        lockManager.lock();
+        showLockScreen();
+    }
+
+    private void showLockScreen() {
+        if (lockManager != null && sceneManager != null) {
+            new LockScreenDialog(this, lockManager, sceneManager, null).show();
+        }
     }
 
     /** vpn_app's launch intent, or null when none is set or it is not installed. */
