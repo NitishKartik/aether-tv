@@ -50,13 +50,19 @@ public class GlassView extends View {
             glowRgb = 0xFFFFFF;
             glowAlpha = 0x30;
             rim.setColor(0xCCFFFFFF);
+            rim.setStrokeWidth(1.5f * density);
         } else {
             glowRgb = argb & 0xFFFFFF;
-            glowAlpha = 0x70;
-            // The rim is the accent lifted towards white, so the edge still reads as glass, not paint.
-            int r = (((glowRgb >> 16) & 0xFF) + 255 * 2) / 3, g = (((glowRgb >> 8) & 0xFF) + 255 * 2) / 3,
-                    b = ((glowRgb & 0xFF) + 255 * 2) / 3;
-            rim.setColor(0xE6000000 | (r << 16) | (g << 8) | b);
+            glowAlpha = 0x95;
+            // The rim is tinted in the app's brand colour with a crisp luminous edge
+            int r = (glowRgb >> 16) & 0xFF;
+            int g = (glowRgb >> 8) & 0xFF;
+            int b = glowRgb & 0xFF;
+            r = (r * 3 + 255) / 4;
+            g = (g * 3 + 255) / 4;
+            b = (b * 3 + 255) / 4;
+            rim.setColor(0xFF000000 | (r << 16) | (g << 8) | b);
+            rim.setStrokeWidth(2.2f * density);
         }
         invalidate();
     }

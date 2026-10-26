@@ -36,6 +36,10 @@ public final class AdGuardDnsDialog extends Dialog {
         btnTestDns = findViewById(R.id.btnTestDns);
         btnClose = findViewById(R.id.btnCloseDns);
 
+        String initialStatus = AdGuardDnsHelper.getSystemPrivateDnsStatus(getContext());
+        txtDnsStatus.setText(initialStatus);
+        txtDnsStatus.setTextColor(initialStatus.startsWith("ACTIVE") ? Color.parseColor("#FF00E676") : Color.parseColor("#FF00E5FF"));
+
         btnCopyDns.setOnClickListener(v -> {
             AdGuardDnsHelper.copyHostnameToClipboard(getContext());
             Toast.makeText(getContext(), "Copied 'dns.adguard.com' to clipboard", Toast.LENGTH_SHORT).show();

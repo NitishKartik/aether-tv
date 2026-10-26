@@ -29,6 +29,7 @@ public final class JarvisAssistantDialog extends Dialog {
         void onOpenAdGuardDns();
         void onLockTv();
         void onOpenSettings();
+        void onOpenYouTube();
     }
 
     private final AssistantActionListener listener;
@@ -59,11 +60,21 @@ public final class JarvisAssistantDialog extends Dialog {
 
         btnMicTrigger.setOnClickListener(v -> toggleListening());
 
+        Button btnCmdYoutube = findViewById(R.id.btnCmdYoutube);
         Button btnCmdGame = findViewById(R.id.btnCmdGame);
         Button btnCmdAi = findViewById(R.id.btnCmdAi);
         Button btnCmdDns = findViewById(R.id.btnCmdDns);
         Button btnCmdLock = findViewById(R.id.btnCmdLock);
         Button btnClose = findViewById(R.id.btnCloseJarvis);
+
+        if (btnCmdYoutube != null) {
+            btnCmdYoutube.setOnClickListener(v -> {
+                speakResponse("Launching YouTube application.", () -> {
+                    dismiss();
+                    if (listener != null) listener.onOpenYouTube();
+                });
+            });
+        }
 
         btnCmdGame.setOnClickListener(v -> {
             speakResponse("Launching Orbital Defender arcade defense system.", () -> {
@@ -183,15 +194,21 @@ public final class JarvisAssistantDialog extends Dialog {
         jarvisView.setState(JarvisView.State.PROCESSING);
         jarvisStateText.setText("INTENT: \"" + rawCommand + "\"");
 
-        if (cmd.contains("game") || cmd.contains("play") || cmd.contains("orbital")) {
+        if (cmd.contains("youtube") || cmd.contains("you tube") || cmd.contains("video") || cmd.contains("play video")) {
+            speakResponse("Launching YouTube application.", () -> {
+                dismiss();
+                if (listener != null) listener.onOpenYouTube();
+            });
+        } else if (cmd.contains("what is ai") || cmd.contains("what's ai") || cmd.contains("what is artificial")
+                || cmd.contains("ai") || cmd.contains("usage") || cmd.contains("token") || cmd.contains("limit")) {
+            speakResponse("Accessing AI intelligence telemetry and usage analytics.", () -> {
+                dismiss();
+                if (listener != null) listener.onOpenAiDashboard();
+            });
+        } else if (cmd.contains("game") || cmd.contains("play") || cmd.contains("orbital")) {
             speakResponse("Executing protocol: Orbital Defender arcade launch.", () -> {
                 dismiss();
                 if (listener != null) listener.onOpenGame();
-            });
-        } else if (cmd.contains("ai") || cmd.contains("usage") || cmd.contains("token") || cmd.contains("limit")) {
-            speakResponse("Retrieving AI provider metrics and telemetry.", () -> {
-                dismiss();
-                if (listener != null) listener.onOpenAiDashboard();
             });
         } else if (cmd.contains("dns") || cmd.contains("adguard") || cmd.contains("adblock") || cmd.contains("ad")) {
             speakResponse("Accessing DNS shield settings and Private DNS configuration.", () -> {

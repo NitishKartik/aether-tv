@@ -69,14 +69,21 @@
                 android:textColor="#FF00E676" />
 
             <Button
-                android:id="@+id/btnCmdGame"
+                android:id="@+id/btnCmdYoutube"
                 style="@style/TopButton"
-                android:text="🎮 Play Game" />
+                android:text="▶ YouTube"
+                android:textColor="#FFFF5252" />
 
             <Button
                 android:id="@+id/btnCmdAi"
                 style="@style/TopButton"
-                android:text="📊 AI Usage" />
+                android:text="🧠 What is AI?"
+                android:textColor="#FF00E5FF" />
+
+            <Button
+                android:id="@+id/btnCmdGame"
+                style="@style/TopButton"
+                android:text="🎮 Arcade Game" />
 
             <Button
                 android:id="@+id/btnCmdDns"

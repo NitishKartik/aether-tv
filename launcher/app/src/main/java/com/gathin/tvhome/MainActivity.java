@@ -3,6 +3,7 @@ package com.gathin.tvhome;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -233,6 +234,13 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private static int lastFocused = 0;
     /** App of the last focused tile, so focus follows it when the app list changes. */
     private static String lastFocusedKey;
+    private final Handler backLockHandler = new Handler(Looper.getMainLooper());
+    private boolean backLockTriggered = false;
+    private final Runnable backLockRunnable = () -> {
+        backLockTriggered = true;
+        lockTv();
+        Toast.makeText(MainActivity.this, "Screen locked (Back held 3s)", Toast.LENGTH_SHORT).show();
+    };
     private float density;
     /** Module cards (res/values/config.xml, module_cards): discovered on resume, shown only after the owner's Show. */
     private boolean moduleCards;
@@ -725,13 +733,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         btnLock = findViewById(R.id.btnLock);
 
         if (btnJarvis != null) {
-            btnJarvis.setOnClickListener(v -> new JarvisAssistantDialog(this, new JarvisAssistantDialog.AssistantActionListener() {
-                @Override public void onOpenGame() { new OrbitalDefenderDialog(MainActivity.this).show(); }
-                @Override public void onOpenAiDashboard() { new AiDashboardDialog(MainActivity.this, aiUsageManager).show(); }
-                @Override public void onOpenAdGuardDns() { new AdGuardDnsDialog(MainActivity.this).show(); }
-                @Override public void onLockTv() { lockTv(); }
-                @Override public void onOpenSettings() { new ControlCenterDialog(MainActivity.this, sceneManager, lockManager).show(); }
-            }).show());
+            btnJarvis.setOnClickListener(v -> openJarvis());
         }
 
         if (btnAiDashboard != null) {
@@ -743,7 +745,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         }
 
         if (btnGame != null) {
-            btnGame.setOnClickListener(v -> new OrbitalDefenderDialog(this).show());
+            btnGame.setOnClickListener(v -> showGameSelector());
         }
 
         if (btnAdGuard != null) {
@@ -975,6 +977,33 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        if (intent != null) {
+            String action = intent.getAction();
+            if (Intent.ACTION_VOICE_COMMAND.equals(action)
+                    || "android.intent.action.VOICE_ASSIST".equals(action)
+                    || Intent.ACTION_ASSIST.equals(action)
+                    || Intent.ACTION_SEARCH.equals(action)
+                    || intent.getBooleanExtra("open_jarvis", false)) {
+                openJarvis();
+                return;
+            }
+            if (intent.getBooleanExtra("open_lock", false)) {
+                showLockScreen();
+                return;
+            }
+            if (intent.getBooleanExtra("open_car_game", false)) {
+                new AetherDriftDialog(this).show();
+                return;
+            }
+            if (intent.getBooleanExtra("open_settings", false)) {
+                new ControlCenterDialog(this, sceneManager, lockManager).show();
+                return;
+            }
+            if (intent.getBooleanExtra("open_cinema", false)) {
+                new EntertainmentDialog(this, entertainmentManager).show();
+                return;
+            }
+        }
         if (openLauncherSettingsIfAsked(intent)) return;
         if (openInputsIfAsked(intent)) return;
         if (intent == null || !intent.hasCategory(Intent.CATEGORY_HOME)) return;
@@ -1224,6 +1253,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     @Override
     protected void onPause() {
         super.onPause();
+        backLockHandler.removeCallbacks(backLockRunnable);
         root.removeCallbacks(showIdleClock);
         endReorder();   // Home or another app while reordering keeps the order so far
         wallpaperPlayer.stop();
@@ -1329,6 +1359,42 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
      */
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        int code = event.getKeyCode();
+
+        // 1. Intercept Xiaomi Remote 9-Square "All Apps" Button
+        if (code == 284 /* KEYCODE_ALL_APPS */) {
+            if (event.getAction() == KeyEvent.ACTION_UP && !event.isCanceled()) {
+                onLibraryRequested();
+            }
+            return true;
+        }
+
+        // 2. Intercept Google Voice Assistant / Search Button from TV Remote
+        if (code == KeyEvent.KEYCODE_VOICE_ASSIST
+                || code == KeyEvent.KEYCODE_ASSIST
+                || code == KeyEvent.KEYCODE_SEARCH) {
+            if (event.getAction() == KeyEvent.ACTION_UP && !event.isCanceled()) {
+                openJarvis();
+            }
+            return true;
+        }
+
+        // 3. Long-press TV Remote BACK for 3 seconds locks screen
+        if (code == KeyEvent.KEYCODE_BACK) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                if (event.getRepeatCount() == 0) {
+                    backLockTriggered = false;
+                    backLockHandler.removeCallbacks(backLockRunnable);
+                    backLockHandler.postDelayed(backLockRunnable, 3000);
+                }
+            } else if (event.getAction() == KeyEvent.ACTION_UP) {
+                backLockHandler.removeCallbacks(backLockRunnable);
+                if (backLockTriggered) {
+                    return true;
+                }
+            }
+        }
+
         if (handleSettingsKey(event)) return true;
         if (tileMenuEnabled && !reordering && openPopup == null && cardPrompt == null
                 && event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
@@ -1344,7 +1410,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (!reordering) return super.dispatchKeyEvent(event);
         if (dockEditing) return dispatchDockEdit(event);
         boolean down = event.getAction() == KeyEvent.ACTION_DOWN;
-        int code = event.getKeyCode();
         boolean ok = code == KeyEvent.KEYCODE_DPAD_CENTER || code == KeyEvent.KEYCODE_ENTER
                 || code == KeyEvent.KEYCODE_NUMPAD_ENTER;
         boolean back = code == KeyEvent.KEYCODE_BACK || code == KeyEvent.KEYCODE_ESCAPE;
@@ -2727,35 +2792,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             }
         } catch (Exception ignored) {
         }
-        // With a VPN app configured, a VPN that is down matters too: show a red "VPN off" capsule then.
-        boolean vpnDown = !vpn && online && !vpnApp.isEmpty();
-        if (vpnPill) updateVpnPill(vpn);
-        if ((vpn || vpnDown) && !vpnPill) {
-            // Network name, then the green lock-and-VPN (or red "VPN off") capsule drawn in place of the word.
-            String badge = getString(vpn ? R.string.vpn : R.string.vpn_off);
-            VpnBadge span = new VpnBadge(vpn ? getDrawable(R.drawable.ic_lock) : null, density);
-            // The pill has a maximum width and ellipsizes at the end, which would cut the badge off after
-            // a long network name, so shorten the name to whatever room the badge leaves. The Wi-Fi icon and its
-            // gap are counted by hand: until the pill has a resolved layout direction (the first call, from
-            // onResume, runs before that) getTotalPaddingStart/End leave the compound drawables out, which
-            // left the name about 31dp too much room and the badge cut off.
-            TextPaint paint = btnWifi.getPaint();
-            Drawable[] compound = btnWifi.getCompoundDrawablesRelative();
-            int iconRoom = compound[0] != null ? compound[0].getIntrinsicWidth() + btnWifi.getCompoundDrawablePadding() : 0;
-            float room = btnWifi.getMaxWidth() - btnWifi.getPaddingStart() - btnWifi.getPaddingEnd() - iconRoom
-                    - span.getSize(paint, badge, 0, badge.length(), null) - paint.measureText(" ") - 2 * density;
-            String name = TextUtils.ellipsize(text, paint, Math.max(0, room), TextUtils.TruncateAt.END).toString();
-            // A long badge ("VPN отключён") can leave room for a stub like "MT…", which says nothing and, after
-            // rounding, can push the badge itself out of the pill. Show the badge alone then. On Ethernet the
-            // icon already names the link, and "Ethernet" cut to "Ethe…" or not depended on the font size (#961),
-            // so Ethernet always shows the icon and the badge alone.
-            // The space stays even then: a line holding only the span gets no font metrics and collapses.
-            boolean stub = name.length() < text.length() && name.length() < 5;
-            text = stub || icon == R.drawable.ic_ethernet ? "" : name;
-            SpannableString label = new SpannableString(text + " " + badge);
-            label.setSpan(span, text.length() + 1, label.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            if (!TextUtils.equals(btnWifi.getText(), label)) btnWifi.setText(label);
-        } else if (!TextUtils.equals(btnWifi.getText(), text)) {
+        // User request: remove VPN icon / badge completely from Wi-Fi pill
+        if (btnVpn != null) btnVpn.setVisibility(View.GONE);
+        if (!TextUtils.equals(btnWifi.getText(), text)) {
             btnWifi.setText(text);
         }
         if (wifiIconOnly) {
@@ -2877,10 +2916,63 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         showLockScreen();
     }
 
+    private LockScreenDialog activeLockDialog;
+
     private void showLockScreen() {
+        if (activeLockDialog != null && activeLockDialog.isShowing()) return;
         if (lockManager != null && sceneManager != null) {
-            new LockScreenDialog(this, lockManager, sceneManager, null).show();
+            activeLockDialog = new LockScreenDialog(this, lockManager, sceneManager, () -> {
+                activeLockDialog = null;
+            });
+            activeLockDialog.setOnDismissListener(d -> activeLockDialog = null);
+            activeLockDialog.show();
         }
+    }
+
+    private void openJarvis() {
+        if (isFinishing() || isDestroyed()) return;
+        new JarvisAssistantDialog(this, new JarvisAssistantDialog.AssistantActionListener() {
+            @Override public void onOpenGame() { showGameSelector(); }
+            @Override public void onOpenAiDashboard() { new AiDashboardDialog(MainActivity.this, aiUsageManager).show(); }
+            @Override public void onOpenAdGuardDns() { new AdGuardDnsDialog(MainActivity.this).show(); }
+            @Override public void onLockTv() { lockTv(); }
+            @Override public void onOpenSettings() { new ControlCenterDialog(MainActivity.this, sceneManager, lockManager).show(); }
+            @Override public void onOpenYouTube() { launchYouTube(); }
+        }).show();
+    }
+
+    private void launchYouTube() {
+        Intent intent = getPackageManager().getLeanbackLaunchIntentForPackage("com.google.android.youtube.tv");
+        if (intent == null) {
+            intent = getPackageManager().getLaunchIntentForPackage("com.google.android.youtube.tv");
+        }
+        if (intent == null) {
+            intent = getPackageManager().getLaunchIntentForPackage("com.google.android.youtube");
+        }
+        if (intent == null) {
+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com"));
+        }
+        try {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "YouTube application not available", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showGameSelector() {
+        String[] games = {"🏎️ Aether Drift (Cyber Highway Racer)", "🚀 Orbital Defender (Galactic Defense)"};
+        new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_Alert)
+            .setTitle("🎮 Aether Arcade")
+            .setItems(games, (dialog, which) -> {
+                if (which == 0) {
+                    new AetherDriftDialog(MainActivity.this).show();
+                } else {
+                    new OrbitalDefenderDialog(MainActivity.this).show();
+                }
+            })
+            .setNegativeButton("Back", null)
+            .show();
     }
 
     /** vpn_app's launch intent, or null when none is set or it is not installed. */
@@ -2904,28 +2996,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         libraryFromVpnPill = true;
     }
 
-    /** vpn_pill: the whole pill solid green with a lock while a VPN is up, solid red "VPN off" while it is not. */
+    /** vpn_pill: removed per user request. */
     private void updateVpnPill(boolean vpn) {
-        int state = VpnBadge.pillState(vpn, vpnAppIntent() != null);
-        if (state == VpnBadge.PILL_HIDDEN) {
-            if (btnVpn.getVisibility() == View.GONE) return;
-            boolean focused = btnVpn.hasFocus();
-            btnVpn.setVisibility(View.GONE);
-            if (focused) (btnWifi.getVisibility() == View.VISIBLE ? btnWifi : firstTopButton()).requestFocus();
-            return;
-        }
-        if (state != vpnPillState) {
-            vpnPillState = state;
-            boolean up = state == VpnBadge.PILL_UP;
-            // Dark ink on green, white on red, focused or not: the white focus ring is drawn by the background.
-            ColorStateList ink = ColorStateList.valueOf(up ? VpnBadge.INK : VpnBadge.INK_OFF);
-            btnVpn.setText(up ? R.string.vpn : R.string.vpn_off);
-            btnVpn.setTextColor(ink);
-            btnVpn.setBackground(VpnBadge.pillBackground(up, density));
-            btnVpn.setCompoundDrawablesRelativeWithIntrinsicBounds(up ? R.drawable.ic_lock : 0, 0, 0, 0);
-            btnVpn.setCompoundDrawableTintList(ink);
-        }
-        btnVpn.setVisibility(View.VISIBLE);
+        if (btnVpn != null) btnVpn.setVisibility(View.GONE);
     }
 
 

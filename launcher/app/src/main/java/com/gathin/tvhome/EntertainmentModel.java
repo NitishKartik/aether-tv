@@ -19,10 +19,18 @@ public final class EntertainmentModel {
     public final boolean isHindi;
     public final boolean isTvShow;
     public boolean isWatchlist;
+    public final String posterUrl;
 
     public EntertainmentModel(String id, String title, int year, double imdbRating,
                               String genre, String duration, String plot, String cast,
                               boolean isHindi, boolean isTvShow, boolean isWatchlist) {
+        this(id, title, year, imdbRating, genre, duration, plot, cast, isHindi, isTvShow, isWatchlist, "");
+    }
+
+    public EntertainmentModel(String id, String title, int year, double imdbRating,
+                              String genre, String duration, String plot, String cast,
+                              boolean isHindi, boolean isTvShow, boolean isWatchlist,
+                              String posterUrl) {
         this.id = id;
         this.title = title;
         this.year = year;
@@ -34,6 +42,7 @@ public final class EntertainmentModel {
         this.isHindi = isHindi;
         this.isTvShow = isTvShow;
         this.isWatchlist = isWatchlist;
+        this.posterUrl = posterUrl != null ? posterUrl : "";
     }
 
     public JSONObject toJson() throws JSONException {
@@ -49,6 +58,7 @@ public final class EntertainmentModel {
         obj.put("isHindi", isHindi);
         obj.put("isTvShow", isTvShow);
         obj.put("isWatchlist", isWatchlist);
+        obj.put("posterUrl", posterUrl);
         return obj;
     }
 
@@ -64,7 +74,8 @@ public final class EntertainmentModel {
             obj.optString("cast", ""),
             obj.optBoolean("isHindi", false),
             obj.optBoolean("isTvShow", false),
-            obj.optBoolean("isWatchlist", false)
+            obj.optBoolean("isWatchlist", false),
+            obj.optString("posterUrl", "")
         );
     }
 }

@@ -76,7 +76,7 @@ public final class ControlCenterDialog extends Dialog {
     private void selectCategory(int index) {
         selectedNavIndex = index;
         for (int i = 0; i < navButtons.length; i++) {
-            navButtons[i].setTextColor(i == index ? Color.parseColor("#FF00E5FF") : Color.parseColor("#B3FFFFFF"));
+            navButtons[i].setSelected(i == index);
         }
 
         panelActionsContainer.removeAllViews();
@@ -261,6 +261,11 @@ public final class ControlCenterDialog extends Dialog {
         card.addView(titleView);
         card.addView(subView);
         card.setOnClickListener(listener);
+
+        card.setOnFocusChangeListener((v, hasFocus) -> {
+            titleView.setTextColor(hasFocus ? Color.WHITE : Color.parseColor("#E6FFFFFF"));
+            subView.setTextColor(hasFocus ? Color.WHITE : Color.parseColor("#99FFFFFF"));
+        });
 
         panelActionsContainer.addView(card);
     }

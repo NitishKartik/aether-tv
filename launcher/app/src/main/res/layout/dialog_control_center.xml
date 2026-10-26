@@ -52,12 +52,12 @@
                 android:orientation="vertical"
                 android:padding="12dp">
 
-                <Button android:id="@+id/catDisplay" style="@style/TopButton" android:layout_width="match_parent" android:layout_margin="3dp" android:text="📺 Display &amp; Visuals" android:textColor="#FF00E5FF" />
-                <Button android:id="@+id/catSound" style="@style/TopButton" android:layout_width="match_parent" android:layout_margin="3dp" android:text="🔊 Sound &amp; Audio" />
-                <Button android:id="@+id/catNetwork" style="@style/TopButton" android:layout_width="match_parent" android:layout_margin="3dp" android:text="🌐 Network &amp; DNS" />
-                <Button android:id="@+id/catApps" style="@style/TopButton" android:layout_width="match_parent" android:layout_margin="3dp" android:text="📱 Applications" />
-                <Button android:id="@+id/catDevice" style="@style/TopButton" android:layout_width="match_parent" android:layout_margin="3dp" android:text="⚡ Device Diagnostics" />
-                <Button android:id="@+id/catScenes" style="@style/TopButton" android:layout_width="match_parent" android:layout_margin="3dp" android:text="🌅 Day/Night Scene" />
+                <Button android:id="@+id/catDisplay" style="@style/ControlCenterNavButton" android:text="📺 Display &amp; Visuals" />
+                <Button android:id="@+id/catSound" style="@style/ControlCenterNavButton" android:text="🔊 Sound &amp; Audio" />
+                <Button android:id="@+id/catNetwork" style="@style/ControlCenterNavButton" android:text="🌐 Network &amp; DNS" />
+                <Button android:id="@+id/catApps" style="@style/ControlCenterNavButton" android:text="📱 Applications" />
+                <Button android:id="@+id/catDevice" style="@style/ControlCenterNavButton" android:text="⚡ Device Diagnostics" />
+                <Button android:id="@+id/catScenes" style="@style/ControlCenterNavButton" android:text="🌅 Day/Night Scene" />
             </LinearLayout>
 
             <!-- Right Content Area -->

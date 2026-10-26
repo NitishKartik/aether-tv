@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -99,10 +100,12 @@ public final class EntertainmentDialog extends Dialog {
     }
 
     private class CinemaViewHolder extends RecyclerView.ViewHolder {
+        ImageView moviePoster;
         TextView movieTitle, ratingPill, movieMeta, moviePlot, watchlistBadge;
 
         CinemaViewHolder(View itemView) {
             super(itemView);
+            moviePoster = itemView.findViewById(R.id.moviePoster);
             movieTitle = itemView.findViewById(R.id.movieTitle);
             ratingPill = itemView.findViewById(R.id.ratingPill);
             movieMeta = itemView.findViewById(R.id.movieMeta);
@@ -123,6 +126,10 @@ public final class EntertainmentDialog extends Dialog {
             movieMeta.setText(item.year + " · " + item.duration + " · " + item.genre);
             moviePlot.setText(item.plot);
             watchlistBadge.setVisibility(item.isWatchlist ? View.VISIBLE : View.GONE);
+
+            if (moviePoster != null) {
+                PosterLoader.get(itemView.getContext()).loadPoster(item.posterUrl, item.title, item.imdbRating, moviePoster);
+            }
         }
     }
 

@@ -30,6 +30,24 @@ public final class AdGuardDnsHelper {
         }
     }
 
+    public static String getSystemPrivateDnsStatus(Context context) {
+        try {
+            String mode = Settings.Global.getString(context.getContentResolver(), "private_dns_mode");
+            String specifier = Settings.Global.getString(context.getContentResolver(), "private_dns_specifier");
+            if ("hostname".equalsIgnoreCase(mode) && ADGUARD_HOSTNAME.equalsIgnoreCase(specifier)) {
+                return "ACTIVE // Private DNS is configured to " + ADGUARD_HOSTNAME;
+            } else if (specifier != null && !specifier.isEmpty()) {
+                return "CUSTOM // Private DNS set to: " + specifier;
+            } else if ("opportunistic".equalsIgnoreCase(mode)) {
+                return "AUTOMATIC // System is using opportunistic DNS mode";
+            } else {
+                return "NOT CONFIGURED // Private DNS is currently Off in Stock Settings";
+            }
+        } catch (Exception e) {
+            return "STANDBY // Android 9 Network Settings";
+        }
+    }
+
     public static boolean openPrivateDnsSettings(Context context) {
         // 1. Try Network Provider / Wireless Settings (Android 9/10+)
         Intent[] candidateIntents = new Intent[]{

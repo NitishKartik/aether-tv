@@ -96,6 +96,11 @@ public final class LockScreenDialog extends Dialog {
         if (btnUnlock != null) {
             btnUnlock.setOnClickListener(v -> attemptUnlock());
         }
+
+        Button btn5 = findViewById(R.id.btnKey5);
+        if (btn5 != null) {
+            btn5.post(btn5::requestFocus);
+        }
     }
 
     private void appendDigit(String digit) {
@@ -151,16 +156,21 @@ public final class LockScreenDialog extends Dialog {
                 return;
             }
             lockManager.setPassword(pin);
-            lockManager.lock();
-            lockStatus.setText("PIN saved! Aether TV is locked.");
+            lockManager.unlock();
+            lockStatus.setText("PIN saved! Unlocked.");
             lockStatus.setTextColor(Color.parseColor("#FF00E676"));
-            pinBuilder.setLength(0);
-            updatePinDisplay();
+            handler.postDelayed(() -> {
+                dismiss();
+                if (listener != null) {
+                    listener.onUnlocked();
+                }
+            }, 200);
             return;
         }
 
         boolean success = lockManager.verifyPassword(pin);
         if (success) {
+            lockManager.unlock();
             lockStatus.setText("Unlocked!");
             lockStatus.setTextColor(Color.parseColor("#FF00E676"));
             handler.postDelayed(() -> {
@@ -168,7 +178,7 @@ public final class LockScreenDialog extends Dialog {
                 if (listener != null) {
                     listener.onUnlocked();
                 }
-            }, 300);
+            }, 200);
         } else {
             shakeCard();
             pinBuilder.setLength(0);

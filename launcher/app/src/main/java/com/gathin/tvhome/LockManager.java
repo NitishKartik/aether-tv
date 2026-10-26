@@ -41,6 +41,9 @@ public final class LockManager {
 
     public LockManager(Context context) {
         this.prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        if (!prefs.contains(KEY_HASH)) {
+            setPassword("1234");
+        }
     }
 
     public boolean isLockEnabled() {

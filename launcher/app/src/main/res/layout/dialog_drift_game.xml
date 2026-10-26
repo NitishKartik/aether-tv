@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FF050813">
+
+    <com.gathin.tvhome.AetherDriftView
+        android:id="@+id/driftGameView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Top Floating Game Controls -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="40dp"
+        android:paddingEnd="40dp"
+        android:paddingTop="20dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="🏎️ Aether Drift // Cyber Highway"
+            android:textColor="#FF00E5FF"
+            android:textSize="18sp"
+            android:fontFamily="@font/outfit_medium" />
+
+        <Button
+            android:id="@+id/btnPauseDrift"
+            style="@style/TopButton"
+            android:text="Pause"
+            android:textColor="#FFFFFFFF" />
+
+        <Button
+            android:id="@+id/btnCloseDrift"
+            style="@style/TopButton"
+            android:layout_marginStart="8dp"
+            android:text="Exit"
+            android:textColor="#FFFF5252" />
+    </LinearLayout>
+</FrameLayout>

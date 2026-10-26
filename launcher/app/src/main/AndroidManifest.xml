@@ -94,6 +94,13 @@
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <!-- Intercept Google Voice Assistant and Search key intents to launch Jarvis -->
+            <intent-filter>
+                <action android:name="android.intent.action.VOICE_ASSIST" />
+                <action android:name="android.intent.action.ASSIST" />
+                <action android:name="android.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
             <!-- Listed in the TV's own app list, so it can be opened from the stock home screen too. -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
