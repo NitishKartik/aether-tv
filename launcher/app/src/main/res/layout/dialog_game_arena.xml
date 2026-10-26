@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#D9050811"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="640dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:background="@drawable/glass_panel"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:paddingTop="28dp"
+        android:paddingBottom="28dp">
+
+        <!-- Header -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🎮 AETHER GAME ARENA"
+            android:textColor="#FFFFFFFF"
+            android:textSize="20sp"
+            android:fontFamily="@font/outfit_medium"
+            android:letterSpacing="0.08"
+            android:textAllCaps="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Select an arcade experience to launch"
+            android:textColor="#80FFFFFF"
+            android:textSize="12sp"
+            android:fontFamily="@font/outfit_regular"
+            android:letterSpacing="0.04" />
+
+        <!-- Game Cards Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <!-- Card 1: Aether Drift -->
+            <LinearLayout
+                android:id="@+id/cardAetherDrift"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="140dp"
+                android:layout_marginEnd="10dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:focusable="true"
+                android:clickable="true"
+                android:background="@drawable/glass_card_bg"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🏎️"
+                    android:textSize="32sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Aether Drift"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/outfit_medium"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Cyber Highway Racer"
+                    android:textColor="#8000E5FF"
+                    android:textSize="11sp"
+                    android:fontFamily="@font/outfit_regular"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <!-- Card 2: Orbital Defender -->
+            <LinearLayout
+                android:id="@+id/cardOrbitalDefender"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="140dp"
+                android:layout_marginStart="10dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:focusable="true"
+                android:clickable="true"
+                android:background="@drawable/glass_card_bg"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🚀"
+                    android:textSize="32sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Orbital Defender"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/outfit_medium"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Galactic Defense"
+                    android:textColor="#80E040FB"
+                    android:textSize="11sp"
+                    android:fontFamily="@font/outfit_regular"
+                    android:singleLine="true" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Back Button -->
+        <Button
+            android:id="@+id/btnBackArena"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/glass_pill_bg"
+            android:text="BACK"
+            android:textColor="#B3FFFFFF"
+            android:textSize="12sp"
+            android:fontFamily="@font/outfit_medium"
+            android:letterSpacing="0.08"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:focusable="true" />
+    </LinearLayout>
+</FrameLayout>

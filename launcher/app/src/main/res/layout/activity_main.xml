@@ -168,6 +168,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
+                android:layout_toStartOf="@+id/topButtons"
+                android:layout_marginEnd="16dp"
                 android:orientation="vertical">
 
                 <!-- The header texts use gravity left, not start: the launcher lays out left to right
@@ -372,17 +374,6 @@
                     android:nextFocusDown="@+id/grid" />
 
                 <TextView
-                    android:id="@+id/btnNowPlaying"
-                    style="@style/TopButton"
-                    android:maxWidth="160dp"
-                    android:singleLine="true"
-                    android:ellipsize="end"
-                    android:visibility="gone"
-                    android:text="Now Playing"
-                    android:drawableStart="@drawable/ic_now_playing"
-                    android:nextFocusDown="@+id/grid" />
-
-                <TextView
                     android:id="@+id/btnWifi"
                     style="@style/TopButton"
                     android:maxWidth="160dp"
@@ -424,6 +415,84 @@
                     android:nextFocusDown="@+id/grid" />
             </LinearLayout>
         </RelativeLayout>
+
+        <!-- Now Playing Media Banner (between Top Bar and App Dock) -->
+        <LinearLayout
+            android:id="@+id/nowPlayingBanner"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/glass_card_bg"
+            android:paddingStart="14dp"
+            android:paddingEnd="16dp"
+            android:focusable="true"
+            android:clickable="true"
+            android:nextFocusUp="@+id/btnSettings"
+            android:nextFocusDown="@+id/grid"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/nowPlayingThumb"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_now_playing" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/nowPlayingBannerTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/outfit_medium"
+                    android:letterSpacing="0.01" />
+
+                <TextView
+                    android:id="@+id/nowPlayingBannerArtist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textColor="#A6FFFFFF"
+                    android:textSize="11.5sp"
+                    android:fontFamily="@font/outfit_regular"
+                    android:letterSpacing="0.02" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/nowPlayingSourcePill"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:background="@drawable/glass_pill_bg"
+                android:textColor="#80FFFFFF"
+                android:textSize="10.5sp"
+                android:fontFamily="@font/outfit_medium"
+                android:letterSpacing="0.08"
+                android:textAllCaps="true"
+                android:text="SMARTTUBE" />
+
+            <com.gathin.tvhome.AudioWaveView
+                android:id="@+id/nowPlayingWave"
+                android:layout_width="40dp"
+                android:layout_height="22dp" />
+        </LinearLayout>
 
         <!-- The wrapper clips at the grid's edge; the grid itself must not clip so scaled tiles can overflow their cells. -->
         <FrameLayout

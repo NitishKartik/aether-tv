@@ -4,6 +4,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaMetadata;
 import android.media.session.MediaController;
@@ -31,13 +33,19 @@ public final class NowPlayingManager {
         public final String artist;
         public final String packageName;
         public final String appName;
+        public final Bitmap artwork;
 
-        public MediaInfo(boolean isPlaying, String title, String artist, String packageName, String appName) {
+        public MediaInfo(boolean isPlaying, String title, String artist, String packageName, String appName, Bitmap artwork) {
             this.isPlaying = isPlaying;
             this.title = title != null ? title : "";
             this.artist = artist != null ? artist : "";
             this.packageName = packageName != null ? packageName : "";
             this.appName = appName != null ? appName : "";
+            this.artwork = artwork;
+        }
+
+        public MediaInfo(boolean isPlaying, String title, String artist, String packageName, String appName) {
+            this(isPlaying, title, artist, packageName, appName, null);
         }
     }
 
@@ -138,6 +146,14 @@ public final class NowPlayingManager {
                             if (desc != null) title = desc.toString();
                         }
                     }
+                    Bitmap art = null;
+                    if (meta != null) {
+                        art = meta.getBitmap(MediaMetadata.METADATA_KEY_ART);
+                        if (art == null) art = meta.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART);
+                        if (art == null && meta.getDescription() != null) {
+                            art = meta.getDescription().getIconBitmap();
+                        }
+                    }
                     String pkg = active.getPackageName();
                     String appName = getAppLabel(pkg);
 
@@ -145,7 +161,7 @@ public final class NowPlayingManager {
                         title = "Playing in " + appName;
                     }
 
-                    MediaInfo newInfo = new MediaInfo(playing, title, artist, pkg, appName);
+                    MediaInfo newInfo = new MediaInfo(playing, title, artist, pkg, appName, art);
                     updateState(newInfo);
                     return;
                 }
@@ -183,6 +199,15 @@ public final class NowPlayingManager {
             return pm.getApplicationLabel(pm.getApplicationInfo(packageName, 0)).toString();
         } catch (Exception ignored) {
             return "Media";
+        }
+    }
+
+    public Drawable getAppIcon(String packageName) {
+        if (packageName == null || packageName.isEmpty()) return null;
+        try {
+            return context.getPackageManager().getApplicationIcon(packageName);
+        } catch (Exception ignored) {
+            return null;
         }
     }
 

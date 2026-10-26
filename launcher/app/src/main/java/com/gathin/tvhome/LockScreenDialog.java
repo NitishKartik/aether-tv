@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -78,6 +79,8 @@ public final class LockScreenDialog extends Dialog {
         View lockNowPlayingCard = findViewById(R.id.lockNowPlayingCard);
         TextView lockNowPlayingTitle = findViewById(R.id.lockNowPlayingTitle);
         TextView lockNowPlayingArtist = findViewById(R.id.lockNowPlayingArtist);
+        ImageView lockNowPlayingThumb = findViewById(R.id.lockNowPlayingThumb);
+        AudioWaveView lockNowPlayingWave = findViewById(R.id.lockNowPlayingWave);
 
         NowPlayingManager.getInstance(getContext()).addListener(info -> {
             if (lockNowPlayingCard == null) return;
@@ -90,8 +93,26 @@ public final class LockScreenDialog extends Dialog {
                     if (!info.artist.isEmpty()) sub += " • " + info.artist;
                     lockNowPlayingArtist.setText(sub);
                 }
+                if (lockNowPlayingThumb != null) {
+                    if (info.artwork != null) {
+                        lockNowPlayingThumb.setImageBitmap(info.artwork);
+                    } else {
+                        android.graphics.drawable.Drawable appIcon = NowPlayingManager.getInstance(getContext()).getAppIcon(info.packageName);
+                        if (appIcon != null) {
+                            lockNowPlayingThumb.setImageDrawable(appIcon);
+                        } else {
+                            lockNowPlayingThumb.setImageResource(R.drawable.ic_now_playing);
+                        }
+                    }
+                }
+                if (lockNowPlayingWave != null) {
+                    lockNowPlayingWave.setPlaying(true);
+                }
                 lockNowPlayingCard.setVisibility(View.VISIBLE);
             } else {
+                if (lockNowPlayingWave != null) {
+                    lockNowPlayingWave.setPlaying(false);
+                }
                 lockNowPlayingCard.setVisibility(View.GONE);
             }
         });

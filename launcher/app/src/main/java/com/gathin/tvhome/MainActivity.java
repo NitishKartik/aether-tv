@@ -185,7 +185,12 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private View btnGame;
     private View btnControlCenter;
     private View btnLock;
-    private TextView btnNowPlaying;
+    private View nowPlayingBanner;
+    private ImageView nowPlayingThumb;
+    private TextView nowPlayingBannerTitle;
+    private TextView nowPlayingBannerArtist;
+    private TextView nowPlayingSourcePill;
+    private AudioWaveView nowPlayingWave;
     private TextView greeting;
     private View clockBlock;
     private View btnInputs;
@@ -756,18 +761,50 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             btnLock.setOnClickListener(v -> lockTv());
         }
 
-        btnNowPlaying = findViewById(R.id.btnNowPlaying);
-        if (btnNowPlaying != null) {
-            btnNowPlaying.setOnClickListener(v -> NowPlayingManager.getInstance(this).openCurrentPlayer(this));
+        nowPlayingBanner = findViewById(R.id.nowPlayingBanner);
+        nowPlayingThumb = findViewById(R.id.nowPlayingThumb);
+        nowPlayingBannerTitle = findViewById(R.id.nowPlayingBannerTitle);
+        nowPlayingBannerArtist = findViewById(R.id.nowPlayingBannerArtist);
+        nowPlayingSourcePill = findViewById(R.id.nowPlayingSourcePill);
+        nowPlayingWave = findViewById(R.id.nowPlayingWave);
+
+        if (nowPlayingBanner != null) {
+            nowPlayingBanner.setOnClickListener(v -> NowPlayingManager.getInstance(this).openCurrentPlayer(this));
+            nowPlayingBanner.setOnFocusChangeListener((v, hasFocus) -> {
+                if (hasFocus) SoundManager.getInstance(this).playSelect();
+            });
             NowPlayingManager.getInstance(this).addListener(info -> {
-                if (btnNowPlaying == null) return;
+                if (nowPlayingBanner == null) return;
                 if (info != null && info.isPlaying) {
-                    String label = info.title;
-                    if (!info.artist.isEmpty()) label += " • " + info.artist;
-                    btnNowPlaying.setText(label.isEmpty() ? "Media Playing" : label);
-                    btnNowPlaying.setVisibility(View.VISIBLE);
+                    nowPlayingBannerTitle.setText(info.title.isEmpty() ? "Media Playing" : info.title);
+                    nowPlayingBannerArtist.setText(info.artist.isEmpty() ? info.appName : info.artist);
+                    if (nowPlayingSourcePill != null) {
+                        nowPlayingSourcePill.setText(info.appName.toUpperCase(java.util.Locale.ROOT));
+                        nowPlayingSourcePill.setVisibility(info.appName.isEmpty() ? View.GONE : View.VISIBLE);
+                    }
+                    if (nowPlayingThumb != null) {
+                        if (info.artwork != null) {
+                            nowPlayingThumb.setImageBitmap(info.artwork);
+                        } else {
+                            android.graphics.drawable.Drawable appIcon = NowPlayingManager.getInstance(this).getAppIcon(info.packageName);
+                            if (appIcon != null) {
+                                nowPlayingThumb.setImageDrawable(appIcon);
+                            } else {
+                                nowPlayingThumb.setImageResource(R.drawable.ic_now_playing);
+                            }
+                        }
+                    }
+                    if (nowPlayingWave != null) {
+                        nowPlayingWave.setPlaying(true);
+                    }
+                    nowPlayingBanner.setVisibility(View.VISIBLE);
+                    updateTopButtonsFocusDown(true);
                 } else {
-                    btnNowPlaying.setVisibility(View.GONE);
+                    if (nowPlayingWave != null) {
+                        nowPlayingWave.setPlaying(false);
+                    }
+                    nowPlayingBanner.setVisibility(View.GONE);
+                    updateTopButtonsFocusDown(false);
                 }
             });
         }
@@ -851,6 +888,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
             if (keyCode == KeyEvent.KEYCODE_DPAD_UP) return true;
             if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                if (nowPlayingBanner != null && nowPlayingBanner.getVisibility() == View.VISIBLE) {
+                    nowPlayingBanner.requestFocus();
+                    return true;
+                }
                 // Back to the dock tile Up came from, not wherever the focus finder lands.
                 focusTile(singleRow ? lastFocused : lastFocused % COLUMNS);
                 return true;
@@ -867,7 +908,20 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (btnGame != null) btnGame.setOnKeyListener(pillKeys);
         if (btnControlCenter != null) btnControlCenter.setOnKeyListener(pillKeys);
         if (btnLock != null) btnLock.setOnKeyListener(pillKeys);
-        if (btnNowPlaying != null) btnNowPlaying.setOnKeyListener(pillKeys);
+        if (nowPlayingBanner != null) {
+            nowPlayingBanner.setOnKeyListener((v, keyCode, event) -> {
+                if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
+                if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                    if (btnSettings != null) btnSettings.requestFocus();
+                    return true;
+                }
+                if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                    focusTile(singleRow ? lastFocused : lastFocused % COLUMNS);
+                    return true;
+                }
+                return false;
+            });
+        }
         if (btnInputs != null) btnInputs.setOnKeyListener(pillKeys);
         btnWifi.setOnKeyListener(pillKeys);
         btnVpn.setOnKeyListener(pillKeys);
@@ -877,7 +931,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         for (View button : topAppButtons) button.setOnKeyListener(pillKeys);
         if (advancedEffects) {
             List<View> pills = new ArrayList<>(Arrays.asList(
-                btnJarvis, btnAiDashboard, btnCinema, btnGame, btnControlCenter, btnLock, btnNowPlaying,
+                btnJarvis, btnAiDashboard, btnCinema, btnGame, btnControlCenter, btnLock,
                 btnInputs, btnWifi, btnVpn, btnReorder, btnLibraryTop, btnSettings
             ));
             pills.addAll(topAppButtons);
@@ -1050,6 +1104,19 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             // so only go back to the first one; rebuilding would replay the entrance animation for nothing.
             grid.post(() -> focusTile(0));
         }
+    }
+
+    private void updateTopButtonsFocusDown(boolean bannerVisible) {
+        int nextId = bannerVisible ? R.id.nowPlayingBanner : R.id.grid;
+        if (btnJarvis != null) btnJarvis.setNextFocusDownId(nextId);
+        if (btnAiDashboard != null) btnAiDashboard.setNextFocusDownId(nextId);
+        if (btnCinema != null) btnCinema.setNextFocusDownId(nextId);
+        if (btnGame != null) btnGame.setNextFocusDownId(nextId);
+        if (btnControlCenter != null) btnControlCenter.setNextFocusDownId(nextId);
+        if (btnLock != null) btnLock.setNextFocusDownId(nextId);
+        if (btnWifi != null) btnWifi.setNextFocusDownId(nextId);
+        View btnSettings = findViewById(R.id.btnSettings);
+        if (btnSettings != null) btnSettings.setNextFocusDownId(nextId);
     }
 
     @Override
@@ -2439,9 +2506,15 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         int count = adapter.appCount();
         int target;
         if (singleRow) {
-            // One row: Up leaves for the top bar, Down has nowhere to go, and Left/Right walk the whole row,
+            // One row: Up leaves for the top bar (or now playing banner), Down has nowhere to go, and Left/Right walk the whole row,
             // stopping at its two ends (the default focus search scrolls the row to the next tile).
-            if (keyCode == KeyEvent.KEYCODE_DPAD_UP) return false;
+            if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                if (nowPlayingBanner != null && nowPlayingBanner.getVisibility() == View.VISIBLE) {
+                    nowPlayingBanner.requestFocus();
+                    return true;
+                }
+                return false;
+            }
             if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) return true;
             boolean forward = rtlAppGrid ? keyCode == KeyEvent.KEYCODE_DPAD_LEFT : keyCode == KeyEvent.KEYCODE_DPAD_RIGHT;
             int last = adapter.focusablePosition(count - 1);
@@ -2465,7 +2538,13 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                     rtlAppGrid, keyCode == KeyEvent.KEYCODE_DPAD_LEFT);
         }
         if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-            if (position < COLUMNS) return false;          // dock row: let focus move to the top bar
+            if (position < COLUMNS) {
+                if (nowPlayingBanner != null && nowPlayingBanner.getVisibility() == View.VISIBLE) {
+                    nowPlayingBanner.requestFocus();
+                    return true;
+                }
+                return false;          // dock row: let focus move to the top bar
+            }
             target = position - COLUMNS;
         } else {
             int lastRowStart = ((count - 1) / COLUMNS) * COLUMNS;
@@ -3030,18 +3109,14 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     }
 
     private void showGameSelector() {
-        String[] games = {"🏎️ Aether Drift (Cyber Highway Racer)", "🚀 Orbital Defender (Galactic Defense)"};
-        new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_Alert)
-            .setTitle("🎮 Aether Arcade")
-            .setItems(games, (dialog, which) -> {
-                if (which == 0) {
-                    new AetherDriftDialog(MainActivity.this).show();
-                } else {
-                    new OrbitalDefenderDialog(MainActivity.this).show();
-                }
-            })
-            .setNegativeButton("Back", null)
-            .show();
+        SoundManager.getInstance(this).playDialogOpen();
+        new GameArenaDialog(this, which -> {
+            if (which == 0) {
+                new AetherDriftDialog(MainActivity.this).show();
+            } else {
+                new OrbitalDefenderDialog(MainActivity.this).show();
+            }
+        }).show();
     }
 
     /** vpn_app's launch intent, or null when none is set or it is not installed. */
@@ -3528,10 +3603,13 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         View panel = getLayoutInflater().inflate(R.layout.popup_inputs, root, false);
         LinearLayout rows = panel.findViewById(R.id.rows);
         PopupWindow popup = glassPopup(panel, (int) (200 * density));
-        if (dockRow && position < adapter.movableCount()) {
-            boolean inDock = position < COLUMNS;
-            addSettingsMenuRow(rows, popup, inDock ? R.string.tile_replace_in_dock : R.string.tile_add_to_dock,
-                    () -> startDockEditFor(key, inDock));
+        if (position < adapter.movableCount()) {
+            boolean inDock = dockRow && position < COLUMNS;
+            if (!inDock) {
+                addSettingsMenuRow(rows, popup, R.string.tile_add_to_dock, () -> pinAppToDock(key));
+            } else {
+                addSettingsMenuRow(rows, popup, R.string.tile_replace_in_dock, () -> startDockEditFor(key, true));
+            }
         }
         if (position < adapter.movableCount()) addSettingsMenuRow(rows, popup, R.string.tile_move, () -> {
             if (!beginReorder()) return;
@@ -3595,6 +3673,23 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             return true;
         });
         rows.addView(row);
+    }
+
+    public void pinAppToDock(String key) {
+        if (key == null || key.isEmpty()) return;
+        String pkg = key.contains("/") ? key.substring(0, key.indexOf('/')) : key;
+        if (appLibraryEnabled) {
+            LibraryApps.save(this, pkg, true);
+        }
+        List<String> keys = new ArrayList<>(adapter.movableKeys());
+        keys.remove(key);
+        keys.add(0, key);
+        Order order = new Order(Order.dockKey(dockApps), keys, -1);
+        if (Order.save(Order.file(this), order)) {
+            adapter.setSavedOrder(Order.ranks(order, dockApps), Order.docked(order, dockApps));
+            reloadApps(false);
+            Toast.makeText(this, "Pinned to Dock", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
