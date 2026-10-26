@@ -36,17 +36,22 @@ public final class LockManager {
     private static final int PBKDF2_ITERATIONS = 10000;
     private static final int KEY_LENGTH_BITS = 256;
 
+    private final Context context;
     private final SharedPreferences prefs;
     private final SecureRandom secureRandom = new SecureRandom();
 
     public LockManager(Context context) {
-        this.prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        if (!prefs.contains(KEY_HASH)) {
+        this.context = context != null ? context.getApplicationContext() : null;
+        this.prefs = context != null
+                ? context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                : null;
+        if (prefs != null && !prefs.contains(KEY_HASH)) {
             setPassword("1234");
         }
     }
 
     public boolean isLockEnabled() {
+        if (prefs == null) return false;
         return prefs.getBoolean(KEY_ENABLED, false) && prefs.contains(KEY_HASH);
     }
 
@@ -63,11 +68,32 @@ public final class LockManager {
             long lastUnlocked = prefs.getLong(KEY_LAST_UNLOCKED_TIME, 0);
             long now = System.currentTimeMillis();
             if (now - lastUnlocked > timeoutMinutes * 60L * 1000L) {
+                // If media (music/video in SmartTube, YouTube, etc.) is active, defer auto-lock
+                if (isMediaPlaying()) {
+                    keepAlive();
+                    return false;
+                }
                 lock();
                 return true;
             }
         }
         return false;
+    }
+
+    public boolean isMediaPlaying() {
+        if (context == null) return false;
+        try {
+            android.media.AudioManager am = (android.media.AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+            return am != null && am.isMusicActive();
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
+    public void keepAlive() {
+        if (prefs != null) {
+            prefs.edit().putLong(KEY_LAST_UNLOCKED_TIME, System.currentTimeMillis()).apply();
+        }
     }
 
     public void lock() {

@@ -152,18 +152,16 @@ public final class SceneManager {
     }
 
     public String getGreetingText() {
-        Scene scene = getCurrentScene();
+        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         String name = getUserName();
-        switch (scene) {
-            case MORNING:
-                return "GOOD MORNING // " + name;
-            case DAY:
-                return "GOOD AFTERNOON // " + name;
-            case EVENING:
-                return "GOOD EVENING // " + name;
-            case NIGHT:
-            default:
-                return "GOOD NIGHT // " + name;
+        if (hour >= 5 && hour < 12) {
+            return "GOOD MORNING // " + name;
+        } else if (hour >= 12 && hour < 17) {
+            return "GOOD AFTERNOON // " + name;
+        } else if (hour >= 17 && hour < 22) {
+            return "GOOD EVENING // " + name;
+        } else {
+            return "GOOD NIGHT // " + name;
         }
     }
 }

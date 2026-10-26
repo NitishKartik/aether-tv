@@ -160,5 +160,57 @@
                 <Button android:id="@+id/btnKeyUnlock" style="@style/TopButton" android:layout_width="48dp" android:layout_height="36dp" android:layout_margin="2dp" android:padding="0dp" android:text="➔" android:textColor="#FF00E5FF" />
             </GridLayout>
         </LinearLayout>
+
+        <!-- Lock Screen Now Playing Media Card -->
+        <LinearLayout
+            android:id="@+id/lockNowPlayingCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/glass_pill_bg"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_now_playing" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="8dp">
+
+                <TextView
+                    android:id="@+id/lockNowPlayingTitle"
+                    android:layout_width="wrap_content"
+                    android:maxWidth="280dp"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:text="Now Playing"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/outfit_medium" />
+
+                <TextView
+                    android:id="@+id/lockNowPlayingArtist"
+                    android:layout_width="wrap_content"
+                    android:maxWidth="280dp"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:text="Background Playback"
+                    android:textColor="#99FFFFFF"
+                    android:textSize="10sp"
+                    android:fontFamily="@font/outfit_regular" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 </FrameLayout>

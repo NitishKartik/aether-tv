@@ -165,12 +165,14 @@ public final class AetherDriftView extends View {
                     if (playerLane > 0) {
                         playerLane--;
                         targetPlayerX = getLaneCenterX(playerLane);
+                        SoundManager.getInstance(getContext()).playGameDrift();
                     }
                     return true;
                 case KeyEvent.KEYCODE_DPAD_RIGHT:
                     if (playerLane < 2) {
                         playerLane++;
                         targetPlayerX = getLaneCenterX(playerLane);
+                        SoundManager.getInstance(getContext()).playGameDrift();
                     }
                     return true;
                 case KeyEvent.KEYCODE_DPAD_UP:
@@ -313,6 +315,7 @@ public final class AetherDriftView extends View {
             if (Math.abs(orb.x - playerX) < 44f && Math.abs(orb.y - playerY) < 50f) {
                 orbIt.remove();
                 score += 350;
+                SoundManager.getInstance(getContext()).playGameCoin();
                 spawnCollectSparks(orb.x, orb.y);
                 continue;
             }
@@ -335,6 +338,7 @@ public final class AetherDriftView extends View {
 
     private void triggerGameOver(float cx, float cy) {
         state = GameState.GAME_OVER;
+        SoundManager.getInstance(getContext()).playGameCrash();
         if (score > highScore) {
             highScore = score;
             prefs.edit().putInt(KEY_HIGH_SCORE, highScore).apply();

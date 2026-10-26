@@ -71,6 +71,30 @@ public final class LockScreenDialog extends Dialog {
 
         setupKeypad();
         checkLockoutState();
+        setupNowPlaying();
+    }
+
+    private void setupNowPlaying() {
+        View lockNowPlayingCard = findViewById(R.id.lockNowPlayingCard);
+        TextView lockNowPlayingTitle = findViewById(R.id.lockNowPlayingTitle);
+        TextView lockNowPlayingArtist = findViewById(R.id.lockNowPlayingArtist);
+
+        NowPlayingManager.getInstance(getContext()).addListener(info -> {
+            if (lockNowPlayingCard == null) return;
+            if (info != null && info.isPlaying) {
+                if (lockNowPlayingTitle != null) {
+                    lockNowPlayingTitle.setText(info.title.isEmpty() ? "Media Playing" : info.title);
+                }
+                if (lockNowPlayingArtist != null) {
+                    String sub = info.appName;
+                    if (!info.artist.isEmpty()) sub += " • " + info.artist;
+                    lockNowPlayingArtist.setText(sub);
+                }
+                lockNowPlayingCard.setVisibility(View.VISIBLE);
+            } else {
+                lockNowPlayingCard.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void setupKeypad() {
@@ -115,6 +139,7 @@ public final class LockScreenDialog extends Dialog {
         }
         if (pinBuilder.length() < 12) {
             pinBuilder.append(digit);
+            SoundManager.getInstance(getContext()).playKeyTap();
             updatePinDisplay();
             if (pinBuilder.length() == 4) {
                 attemptUnlock();
@@ -125,6 +150,7 @@ public final class LockScreenDialog extends Dialog {
     private void deleteDigit() {
         if (pinBuilder.length() > 0) {
             pinBuilder.deleteCharAt(pinBuilder.length() - 1);
+            SoundManager.getInstance(getContext()).playKeyTap();
             updatePinDisplay();
         }
     }
@@ -151,6 +177,7 @@ public final class LockScreenDialog extends Dialog {
         String pin = pinBuilder.toString();
         if (pin.isEmpty()) {
             shakeCard();
+            SoundManager.getInstance(getContext()).playError();
             lockStatus.setText("Please enter your PIN");
             lockStatus.setTextColor(Color.parseColor("#FFFF5252"));
             return;
@@ -159,12 +186,14 @@ public final class LockScreenDialog extends Dialog {
         if (!lockManager.isLockEnabled()) {
             if (pin.length() < 4) {
                 shakeCard();
+                SoundManager.getInstance(getContext()).playError();
                 lockStatus.setText("PIN must be at least 4 digits");
                 lockStatus.setTextColor(Color.parseColor("#FFFF5252"));
                 return;
             }
             lockManager.setPassword(pin);
             lockManager.unlock();
+            SoundManager.getInstance(getContext()).playUnlock();
             lockStatus.setText("PIN saved! Unlocked.");
             lockStatus.setTextColor(Color.parseColor("#FF00E676"));
             handler.postDelayed(() -> {
@@ -179,6 +208,7 @@ public final class LockScreenDialog extends Dialog {
         boolean success = lockManager.verifyPassword(pin);
         if (success) {
             lockManager.unlock();
+            SoundManager.getInstance(getContext()).playUnlock();
             lockStatus.setText("Unlocked!");
             lockStatus.setTextColor(Color.parseColor("#FF00E676"));
             handler.postDelayed(() -> {
@@ -189,6 +219,7 @@ public final class LockScreenDialog extends Dialog {
             }, 200);
         } else {
             shakeCard();
+            SoundManager.getInstance(getContext()).playError();
             pinBuilder.setLength(0);
             updatePinDisplay();
             if (lockManager.isLockedOut()) {

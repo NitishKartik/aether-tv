@@ -168,9 +168,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_toStartOf="@+id/topButtons"
-                android:layout_marginEnd="4dp"
-                android:minWidth="340dp"
                 android:orientation="vertical">
 
                 <!-- The header texts use gravity left, not start: the launcher lays out left to right
@@ -200,10 +197,11 @@
                         android:id="@+id/clock"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:singleLine="true"
                         android:format12Hour="h:mm"
                         android:format24Hour="HH:mm"
                         android:textColor="#FFFFFFFF"
-                        android:textSize="52sp"
+                        android:textSize="48sp"
                         android:fontFamily="@string/font_light"
                         android:letterSpacing="-0.04"
                         android:includeFontPadding="false" />
@@ -371,6 +369,17 @@
                     android:text="@string/inputs"
                     android:drawableStart="@drawable/ic_input"
                     android:visibility="gone"
+                    android:nextFocusDown="@+id/grid" />
+
+                <TextView
+                    android:id="@+id/btnNowPlaying"
+                    style="@style/TopButton"
+                    android:maxWidth="160dp"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:visibility="gone"
+                    android:text="Now Playing"
+                    android:drawableStart="@drawable/ic_now_playing"
                     android:nextFocusDown="@+id/grid" />
 
                 <TextView

@@ -185,6 +185,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private View btnGame;
     private View btnControlCenter;
     private View btnLock;
+    private TextView btnNowPlaying;
     private TextView greeting;
     private View clockBlock;
     private View btnInputs;
@@ -755,6 +756,22 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             btnLock.setOnClickListener(v -> lockTv());
         }
 
+        btnNowPlaying = findViewById(R.id.btnNowPlaying);
+        if (btnNowPlaying != null) {
+            btnNowPlaying.setOnClickListener(v -> NowPlayingManager.getInstance(this).openCurrentPlayer(this));
+            NowPlayingManager.getInstance(this).addListener(info -> {
+                if (btnNowPlaying == null) return;
+                if (info != null && info.isPlaying) {
+                    String label = info.title;
+                    if (!info.artist.isEmpty()) label += " • " + info.artist;
+                    btnNowPlaying.setText(label.isEmpty() ? "Media Playing" : label);
+                    btnNowPlaying.setVisibility(View.VISIBLE);
+                } else {
+                    btnNowPlaying.setVisibility(View.GONE);
+                }
+            });
+        }
+
         btnInputs = findViewById(R.id.btnInputs);
         View btnSettings = findViewById(R.id.btnSettings);
         if (btnInputs != null) btnInputs.setOnClickListener(v -> showInputs());
@@ -850,6 +867,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (btnGame != null) btnGame.setOnKeyListener(pillKeys);
         if (btnControlCenter != null) btnControlCenter.setOnKeyListener(pillKeys);
         if (btnLock != null) btnLock.setOnKeyListener(pillKeys);
+        if (btnNowPlaying != null) btnNowPlaying.setOnKeyListener(pillKeys);
         if (btnInputs != null) btnInputs.setOnKeyListener(pillKeys);
         btnWifi.setOnKeyListener(pillKeys);
         btnVpn.setOnKeyListener(pillKeys);
@@ -859,7 +877,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         for (View button : topAppButtons) button.setOnKeyListener(pillKeys);
         if (advancedEffects) {
             List<View> pills = new ArrayList<>(Arrays.asList(
-                btnJarvis, btnAiDashboard, btnCinema, btnGame, btnControlCenter, btnLock,
+                btnJarvis, btnAiDashboard, btnCinema, btnGame, btnControlCenter, btnLock, btnNowPlaying,
                 btnInputs, btnWifi, btnVpn, btnReorder, btnLibraryTop, btnSettings
             ));
             pills.addAll(topAppButtons);
@@ -1772,6 +1790,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             appLibrary = null;
             return;
         }
+        SoundManager.getInstance(this).playDialogOpen();
         if (appLibrary != null) appLibrary.close();
         if (openPopup != null) openPopup.dismiss();
         libraryFocusPending = false;
@@ -2957,6 +2976,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private void lockTv() {
         if (lockManager == null) return;
         lockManager.lock();
+        SoundManager.getInstance(this).playLock();
         showLockScreen();
     }
 
@@ -2965,6 +2985,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private void showLockScreen() {
         if (activeLockDialog != null && activeLockDialog.isShowing()) return;
         if (lockManager != null && sceneManager != null) {
+            SoundManager.getInstance(this).playLock();
             activeLockDialog = new LockScreenDialog(this, lockManager, sceneManager, () -> {
                 activeLockDialog = null;
             });
@@ -2979,6 +3000,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             showLockScreen();
             return;
         }
+        SoundManager.getInstance(this).playJarvis();
         new JarvisAssistantDialog(this, new JarvisAssistantDialog.AssistantActionListener() {
             @Override public void onOpenGame() { showGameSelector(); }
             @Override public void onOpenAiDashboard() { new AiDashboardDialog(MainActivity.this, aiUsageManager).show(); }
