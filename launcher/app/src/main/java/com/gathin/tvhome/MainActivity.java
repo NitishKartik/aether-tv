@@ -183,7 +183,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private View btnAiDashboard;
     private View btnCinema;
     private View btnGame;
-    private View btnAdGuard;
     private View btnControlCenter;
     private View btnLock;
     private TextView greeting;
@@ -411,6 +410,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         libraryOkOpens = cfg.libraryOkOpens;
         // restore_key_services: after a force stop, put back the remote's accessibility helpers that Android took
         // off the list (needs WRITE_SECURE_SETTINGS, granted by build-and-install with RESTORE_KEY_SERVICES=1).
+        ServiceRepair.connected(this, HomeKeyService.class);
         if (cfg.restoreKeyServices) ServiceRepair.restore(this);
         settingsRevision = settingsRevision();
         applyViewInputsHandler(cfg.handleViewInputs);
@@ -728,7 +728,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         btnAiDashboard = findViewById(R.id.btnAiDashboard);
         btnCinema = findViewById(R.id.btnCinema);
         btnGame = findViewById(R.id.btnGame);
-        btnAdGuard = findViewById(R.id.btnAdGuard);
         btnControlCenter = findViewById(R.id.btnControlCenter);
         btnLock = findViewById(R.id.btnLock);
 
@@ -746,10 +745,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
         if (btnGame != null) {
             btnGame.setOnClickListener(v -> showGameSelector());
-        }
-
-        if (btnAdGuard != null) {
-            btnAdGuard.setOnClickListener(v -> new AdGuardDnsDialog(this).show());
         }
 
         if (btnControlCenter != null) {
@@ -853,7 +848,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (btnAiDashboard != null) btnAiDashboard.setOnKeyListener(pillKeys);
         if (btnCinema != null) btnCinema.setOnKeyListener(pillKeys);
         if (btnGame != null) btnGame.setOnKeyListener(pillKeys);
-        if (btnAdGuard != null) btnAdGuard.setOnKeyListener(pillKeys);
         if (btnControlCenter != null) btnControlCenter.setOnKeyListener(pillKeys);
         if (btnLock != null) btnLock.setOnKeyListener(pillKeys);
         if (btnInputs != null) btnInputs.setOnKeyListener(pillKeys);
@@ -865,7 +859,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         for (View button : topAppButtons) button.setOnKeyListener(pillKeys);
         if (advancedEffects) {
             List<View> pills = new ArrayList<>(Arrays.asList(
-                btnJarvis, btnAiDashboard, btnCinema, btnGame, btnAdGuard, btnControlCenter, btnLock,
+                btnJarvis, btnAiDashboard, btnCinema, btnGame, btnControlCenter, btnLock,
                 btnInputs, btnWifi, btnVpn, btnReorder, btnLibraryTop, btnSettings
             ));
             pills.addAll(topAppButtons);
@@ -910,6 +904,16 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         }
         // Not after recreate(): the launch intent survives it and would open the settings again.
         if (savedInstanceState == null && !openLauncherSettingsIfAsked(getIntent())) openInputsIfAsked(getIntent());
+        if (savedInstanceState == null && getIntent() != null) {
+            Intent startIntent = getIntent();
+            String act = startIntent.getAction();
+            if (startIntent.getBooleanExtra("open_library", false)
+                    || Intent.ACTION_ALL_APPS.equals(act)
+                    || "com.mitv.tvhome.intent.action.APP".equals(act)
+                    || "com.mitv.tvhome.action.PathWallIntent".equals(act)) {
+                root.post(this::onLibraryRequested);
+            }
+        }
     }
 
     /**
@@ -1001,6 +1005,13 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             }
             if (intent.getBooleanExtra("open_cinema", false)) {
                 new EntertainmentDialog(this, entertainmentManager).show();
+                return;
+            }
+            if (intent.getBooleanExtra("open_library", false)
+                    || Intent.ACTION_ALL_APPS.equals(action)
+                    || "com.mitv.tvhome.intent.action.APP".equals(action)
+                    || "com.mitv.tvhome.action.PathWallIntent".equals(action)) {
+                onLibraryRequested();
                 return;
             }
         }
@@ -1362,8 +1373,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         int code = event.getKeyCode();
 
         // 1. Intercept Xiaomi Remote 9-Square "All Apps" Button
-        if (code == 284 /* KEYCODE_ALL_APPS */) {
-            if (event.getAction() == KeyEvent.ACTION_UP && !event.isCanceled()) {
+        if (code == 284 /* KEYCODE_ALL_APPS */
+                || code == KeyEvent.KEYCODE_ALL_APPS
+                || event.getScanCode() == 580) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
                 onLibraryRequested();
             }
             return true;
@@ -1728,6 +1741,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     @Override
     public void onLibraryRequested() {
+        if (appLibrary != null && appLibrary.isOpen()) {
+            appLibrary.close();
+            appLibrary = null;
+            return;
+        }
         if (appLibrary != null) appLibrary.close();
         if (openPopup != null) openPopup.dismiss();
         libraryFocusPending = false;
@@ -2934,7 +2952,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         new JarvisAssistantDialog(this, new JarvisAssistantDialog.AssistantActionListener() {
             @Override public void onOpenGame() { showGameSelector(); }
             @Override public void onOpenAiDashboard() { new AiDashboardDialog(MainActivity.this, aiUsageManager).show(); }
-            @Override public void onOpenAdGuardDns() { new AdGuardDnsDialog(MainActivity.this).show(); }
             @Override public void onLockTv() { lockTv(); }
             @Override public void onOpenSettings() { new ControlCenterDialog(MainActivity.this, sceneManager, lockManager).show(); }
             @Override public void onOpenYouTube() { launchYouTube(); }

@@ -271,9 +271,16 @@ public class HomeKeyService extends AccessibilityService {
             redirectHomeKey(event);
             return false;
         }
-        if (event.getKeyCode() != KeyEvent.KEYCODE_ALL_APPS) return false;
-        if (event.getAction() == KeyEvent.ACTION_UP && !event.isCanceled()) openHome();
-        return true;
+        // 9-Square / All Apps Button on Xiaomi RC (scan code 580, key code 284, KEYCODE_ALL_APPS)
+        if (event.getKeyCode() == KeyEvent.KEYCODE_ALL_APPS
+                || event.getKeyCode() == 284
+                || event.getScanCode() == 580) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
+                openLibrary();
+            }
+            return true;
+        }
+        return false;
     }
 
     /** Unbound by Android: the user turned the helper off, so Home doesn't put it back (ServiceRepair). */
@@ -380,6 +387,16 @@ public class HomeKeyService extends AccessibilityService {
                 : new Intent(Intent.ACTION_MAIN).setPackage(getPackageName());
         startActivity(open.addCategory(Intent.CATEGORY_HOME)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED));
+    }
+
+    private void openLibrary() {
+        Intent open = new Intent(this, MainActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .putExtra("open_library", true);
+        try {
+            startActivity(open);
+        } catch (ActivityNotFoundException | SecurityException ignored) {
+        }
     }
 
     /** stock_home_redirect while Android's Home is still the stock launcher (launcherx on Google TV outranks this

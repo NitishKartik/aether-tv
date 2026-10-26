@@ -176,6 +176,10 @@ final class AppLibraryDialog {
         });
     }
 
+    boolean isOpen() {
+        return popup != null && popup.isShowing();
+    }
+
     void close() {
         dismissActions();
         if (popup.isShowing()) {

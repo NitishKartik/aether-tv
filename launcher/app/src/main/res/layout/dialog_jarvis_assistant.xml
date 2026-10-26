@@ -86,11 +86,6 @@
                 android:text="🎮 Arcade Game" />
 
             <Button
-                android:id="@+id/btnCmdDns"
-                style="@style/TopButton"
-                android:text="🛡️ AdGuard DNS" />
-
-            <Button
                 android:id="@+id/btnCmdLock"
                 style="@style/TopButton"
                 android:text="🔒 Lock TV" />

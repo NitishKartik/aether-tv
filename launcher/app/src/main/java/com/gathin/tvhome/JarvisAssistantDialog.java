@@ -26,7 +26,6 @@ public final class JarvisAssistantDialog extends Dialog {
     public interface AssistantActionListener {
         void onOpenGame();
         void onOpenAiDashboard();
-        void onOpenAdGuardDns();
         void onLockTv();
         void onOpenSettings();
         void onOpenYouTube();
@@ -63,7 +62,6 @@ public final class JarvisAssistantDialog extends Dialog {
         Button btnCmdYoutube = findViewById(R.id.btnCmdYoutube);
         Button btnCmdGame = findViewById(R.id.btnCmdGame);
         Button btnCmdAi = findViewById(R.id.btnCmdAi);
-        Button btnCmdDns = findViewById(R.id.btnCmdDns);
         Button btnCmdLock = findViewById(R.id.btnCmdLock);
         Button btnClose = findViewById(R.id.btnCloseJarvis);
 
@@ -87,13 +85,6 @@ public final class JarvisAssistantDialog extends Dialog {
             speakResponse("Opening AI Usage and Provider Quotas Dashboard.", () -> {
                 dismiss();
                 if (listener != null) listener.onOpenAiDashboard();
-            });
-        });
-
-        btnCmdDns.setOnClickListener(v -> {
-            speakResponse("Accessing AdGuard Private DNS Configuration.", () -> {
-                dismiss();
-                if (listener != null) listener.onOpenAdGuardDns();
             });
         });
 
@@ -209,11 +200,6 @@ public final class JarvisAssistantDialog extends Dialog {
             speakResponse("Executing protocol: Orbital Defender arcade launch.", () -> {
                 dismiss();
                 if (listener != null) listener.onOpenGame();
-            });
-        } else if (cmd.contains("dns") || cmd.contains("adguard") || cmd.contains("adblock") || cmd.contains("ad")) {
-            speakResponse("Accessing DNS shield settings and Private DNS configuration.", () -> {
-                dismiss();
-                if (listener != null) listener.onOpenAdGuardDns();
             });
         } else if (cmd.contains("lock") || cmd.contains("protect") || cmd.contains("secure")) {
             speakResponse("Locking workstation. Terminal PIN required to resume.", () -> {

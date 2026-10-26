@@ -101,6 +101,13 @@
                 <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <!-- Intercept 9-Square / All Apps hardware button and Xiaomi TV App grid intents -->
+            <intent-filter>
+                <action android:name="android.intent.action.ALL_APPS" />
+                <action android:name="com.mitv.tvhome.intent.action.APP" />
+                <action android:name="com.mitv.tvhome.action.PathWallIntent" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
             <!-- Listed in the TV's own app list, so it can be opened from the stock home screen too. -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

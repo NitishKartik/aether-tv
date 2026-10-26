@@ -352,13 +352,6 @@
                     android:nextFocusDown="@+id/grid" />
 
                 <TextView
-                    android:id="@+id/btnAdGuard"
-                    style="@style/TopButtonIcon"
-                    android:contentDescription="@string/adguard_dns"
-                    android:drawableStart="@drawable/ic_dns"
-                    android:nextFocusDown="@+id/grid" />
-
-                <TextView
                     android:id="@+id/btnControlCenter"
                     style="@style/TopButtonIcon"
                     android:contentDescription="@string/control_center"

@@ -126,15 +126,11 @@ public final class ControlCenterDialog extends Dialog {
     }
 
     private void renderNetworkPanel() {
-        panelHeaderTitle.setText("Network & Private DNS");
-        panelDescription.setText("Manage Wi-Fi networks, Ethernet connection, and AdGuard DNS ad-blocking.");
+        panelHeaderTitle.setText("Network & Connectivity");
+        panelDescription.setText("Manage Wi-Fi networks and Ethernet connection.");
 
         addActionCard("📶 Wi-Fi Settings", "Scan and connect to 2.4 GHz and 5 GHz wireless networks", v -> {
             launchSystemIntent(Settings.ACTION_WIFI_SETTINGS);
-        });
-
-        addActionCard("🛡️ AdGuard Private DNS (dns.adguard.com)", "Configure encrypted system-wide DNS ad-blocking", v -> {
-            new AdGuardDnsDialog(getContext()).show();
         });
     }
 

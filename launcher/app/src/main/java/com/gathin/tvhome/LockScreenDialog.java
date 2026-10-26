@@ -90,6 +90,11 @@ public final class LockScreenDialog extends Dialog {
         Button btnClear = findViewById(R.id.btnKeyClear);
         if (btnClear != null) {
             btnClear.setOnClickListener(v -> deleteDigit());
+            btnClear.setOnLongClickListener(v -> {
+                pinBuilder.setLength(0);
+                updatePinDisplay();
+                return true;
+            });
         }
 
         Button btnUnlock = findViewById(R.id.btnKeyUnlock);
@@ -111,6 +116,9 @@ public final class LockScreenDialog extends Dialog {
         if (pinBuilder.length() < 12) {
             pinBuilder.append(digit);
             updatePinDisplay();
+            if (pinBuilder.length() == 4) {
+                attemptUnlock();
+            }
         }
     }
 
@@ -232,24 +240,27 @@ public final class LockScreenDialog extends Dialog {
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {
-            appendDigit(String.valueOf(keyCode - KeyEvent.KEYCODE_0));
-            return true;
-        } else if (keyCode >= KeyEvent.KEYCODE_NUMPAD_0 && keyCode <= KeyEvent.KEYCODE_NUMPAD_9) {
-            appendDigit(String.valueOf(keyCode - KeyEvent.KEYCODE_NUMPAD_0));
-            return true;
-        } else if (keyCode == KeyEvent.KEYCODE_DEL) {
-            deleteDigit();
-            return true;
-        } else if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_NUMPAD_ENTER) {
-            attemptUnlock();
-            return true;
-        } else if (keyCode == KeyEvent.KEYCODE_BACK) {
-            // macOS lock screen prevents exiting to launcher without PIN
-            return true;
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            int keyCode = event.getKeyCode();
+            if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {
+                appendDigit(String.valueOf(keyCode - KeyEvent.KEYCODE_0));
+                return true;
+            } else if (keyCode >= KeyEvent.KEYCODE_NUMPAD_0 && keyCode <= KeyEvent.KEYCODE_NUMPAD_9) {
+                appendDigit(String.valueOf(keyCode - KeyEvent.KEYCODE_NUMPAD_0));
+                return true;
+            } else if (keyCode == KeyEvent.KEYCODE_DEL) {
+                deleteDigit();
+                return true;
+            } else if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_NUMPAD_ENTER) {
+                attemptUnlock();
+                return true;
+            } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+                // macOS lock screen prevents exiting to launcher without PIN
+                return true;
+            }
         }
-        return super.onKeyDown(keyCode, event);
+        return super.dispatchKeyEvent(event);
     }
 
     @Override
