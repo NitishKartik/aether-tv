@@ -87,6 +87,7 @@ public class HomeKeyService extends AccessibilityService {
     private boolean steppingOut;
     /** The bound helper, so the opt-in broadcast can arm it without waiting for a new connection. */
     private static HomeKeyService running;
+    private LockManager lockManager;
 
     @Override
     protected void onServiceConnected() {
@@ -212,9 +213,9 @@ public class HomeKeyService extends AccessibilityService {
             screenOnReceiver = null;
             powerOnUntil = 0;
         }
-        // home_key_service.xml subscribes to no events, so the redirects ask for window changes only when one is on.
+        // Ensure TYPE_WINDOW_STATE_CHANGED is always listened to for lock security guard
         AccessibilityServiceInfo info = getServiceInfo();
-        if (info != null && (!stockHome.isEmpty() || !powerOnLiveTv.isEmpty())) {
+        if (info != null) {
             info.eventTypes |= AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
             setServiceInfo(info);
         }
@@ -236,8 +237,37 @@ public class HomeKeyService extends AccessibilityService {
         return false;
     }
 
+    private boolean isAllowedKeyWhileLocked(KeyEvent event) {
+        int code = event.getKeyCode();
+        return (code >= KeyEvent.KEYCODE_0 && code <= KeyEvent.KEYCODE_9)
+                || (code >= KeyEvent.KEYCODE_NUMPAD_0 && code <= KeyEvent.KEYCODE_NUMPAD_9)
+                || code == KeyEvent.KEYCODE_DPAD_UP
+                || code == KeyEvent.KEYCODE_DPAD_DOWN
+                || code == KeyEvent.KEYCODE_DPAD_LEFT
+                || code == KeyEvent.KEYCODE_DPAD_RIGHT
+                || code == KeyEvent.KEYCODE_DPAD_CENTER
+                || code == KeyEvent.KEYCODE_ENTER
+                || code == KeyEvent.KEYCODE_NUMPAD_ENTER
+                || code == KeyEvent.KEYCODE_DEL
+                || code == KeyEvent.KEYCODE_BACK
+                || code == KeyEvent.KEYCODE_POWER
+                || code == KeyEvent.KEYCODE_WAKEUP
+                || code == KeyEvent.KEYCODE_SLEEP
+                || code == KeyEvent.KEYCODE_VOLUME_UP
+                || code == KeyEvent.KEYCODE_VOLUME_DOWN
+                || code == KeyEvent.KEYCODE_VOLUME_MUTE;
+    }
+
     @Override
     protected boolean onKeyEvent(KeyEvent event) {
+        if (lockManager == null) {
+            lockManager = new LockManager(this);
+        }
+        if (lockManager.isCurrentlyLocked()) {
+            if (!isAllowedKeyWhileLocked(event)) {
+                return true; // Consume dedicated app keys, shortcuts, and navigation while locked
+            }
+        }
         // power_on_home: the first key after power-on hands the TV to the user (power and wake keys don't count).
         if (powerOnUntil != 0 && event.getAction() == KeyEvent.ACTION_DOWN
                 && event.getKeyCode() != KeyEvent.KEYCODE_POWER && event.getKeyCode() != KeyEvent.KEYCODE_WAKEUP) {
@@ -293,6 +323,18 @@ public class HomeKeyService extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (event.getEventType() != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return;
+
+        if (lockManager == null) {
+            lockManager = new LockManager(this);
+        }
+        if (lockManager.isCurrentlyLocked()) {
+            CharSequence pkg = event.getPackageName();
+            if (pkg != null && !getPackageName().contentEquals(pkg) && !isSystemOverlay(pkg.toString())) {
+                openLock();
+                return;
+            }
+        }
+
         // power_on_home: the firmware opened Live TV by itself at power-on, before anyone pressed a key.
         if (powerOnRedirect(powerOnLiveTv, event.getPackageName(), SystemClock.elapsedRealtime(), powerOnUntil)) {
             openHome();
@@ -397,6 +439,23 @@ public class HomeKeyService extends AccessibilityService {
             startActivity(open);
         } catch (ActivityNotFoundException | SecurityException ignored) {
         }
+    }
+
+    private void openLock() {
+        Intent open = new Intent(this, MainActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .putExtra("open_lock", true);
+        try {
+            startActivity(open);
+        } catch (ActivityNotFoundException | SecurityException ignored) {
+        }
+    }
+
+    private boolean isSystemOverlay(String pkg) {
+        if (pkg == null) return false;
+        return pkg.equals("android")
+                || pkg.equals("com.android.systemui")
+                || pkg.contains("inputmethod");
     }
 
     /** stock_home_redirect while Android's Home is still the stock launcher (launcherx on Google TV outranks this

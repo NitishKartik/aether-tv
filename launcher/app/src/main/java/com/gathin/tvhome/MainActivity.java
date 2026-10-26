@@ -981,7 +981,15 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        if (lockManager != null && lockManager.isCurrentlyLocked()) {
+            showLockScreen();
+            return;
+        }
         if (intent != null) {
+            if (intent.getBooleanExtra("open_lock", false)) {
+                lockTv();
+                return;
+            }
             String action = intent.getAction();
             if (Intent.ACTION_VOICE_COMMAND.equals(action)
                     || "android.intent.action.VOICE_ASSIST".equals(action)
@@ -989,10 +997,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                     || Intent.ACTION_SEARCH.equals(action)
                     || intent.getBooleanExtra("open_jarvis", false)) {
                 openJarvis();
-                return;
-            }
-            if (intent.getBooleanExtra("open_lock", false)) {
-                showLockScreen();
                 return;
             }
             if (intent.getBooleanExtra("open_car_game", false)) {
@@ -1372,6 +1376,24 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     public boolean dispatchKeyEvent(KeyEvent event) {
         int code = event.getKeyCode();
 
+        if (lockManager != null && lockManager.isCurrentlyLocked()) {
+            showLockScreen();
+            if (code == 284 /* KEYCODE_ALL_APPS */
+                    || code == KeyEvent.KEYCODE_ALL_APPS
+                    || event.getScanCode() == 580
+                    || code == KeyEvent.KEYCODE_VOICE_ASSIST
+                    || code == KeyEvent.KEYCODE_ASSIST
+                    || code == KeyEvent.KEYCODE_SEARCH
+                    || code == KeyEvent.KEYCODE_SETTINGS
+                    || code == KeyEvent.KEYCODE_MENU) {
+                return true;
+            }
+            if (activeLockDialog != null && activeLockDialog.isShowing()) {
+                return activeLockDialog.dispatchKeyEvent(event);
+            }
+            return true;
+        }
+
         // 1. Intercept Xiaomi Remote 9-Square "All Apps" Button
         if (code == 284 /* KEYCODE_ALL_APPS */
                 || code == KeyEvent.KEYCODE_ALL_APPS
@@ -1741,6 +1763,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     @Override
     public void onLibraryRequested() {
+        if (lockManager != null && lockManager.isCurrentlyLocked()) {
+            showLockScreen();
+            return;
+        }
         if (appLibrary != null && appLibrary.isOpen()) {
             appLibrary.close();
             appLibrary = null;
@@ -2949,6 +2975,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     private void openJarvis() {
         if (isFinishing() || isDestroyed()) return;
+        if (lockManager != null && lockManager.isCurrentlyLocked()) {
+            showLockScreen();
+            return;
+        }
         new JarvisAssistantDialog(this, new JarvisAssistantDialog.AssistantActionListener() {
             @Override public void onOpenGame() { showGameSelector(); }
             @Override public void onOpenAiDashboard() { new AiDashboardDialog(MainActivity.this, aiUsageManager).show(); }

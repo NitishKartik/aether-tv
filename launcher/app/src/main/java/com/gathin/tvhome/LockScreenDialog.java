@@ -241,8 +241,8 @@ public final class LockScreenDialog extends Dialog {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        int keyCode = event.getKeyCode();
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
-            int keyCode = event.getKeyCode();
             if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {
                 appendDigit(String.valueOf(keyCode - KeyEvent.KEYCODE_0));
                 return true;
@@ -256,11 +256,30 @@ public final class LockScreenDialog extends Dialog {
                 attemptUnlock();
                 return true;
             } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+                if (pinBuilder.length() > 0) {
+                    deleteDigit();
+                }
                 // macOS lock screen prevents exiting to launcher without PIN
                 return true;
             }
         }
-        return super.dispatchKeyEvent(event);
+        boolean isAllowed = keyCode == KeyEvent.KEYCODE_DPAD_UP
+                || keyCode == KeyEvent.KEYCODE_DPAD_DOWN
+                || keyCode == KeyEvent.KEYCODE_DPAD_LEFT
+                || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT
+                || keyCode == KeyEvent.KEYCODE_DPAD_CENTER
+                || keyCode == KeyEvent.KEYCODE_ENTER
+                || keyCode == KeyEvent.KEYCODE_NUMPAD_ENTER
+                || keyCode == KeyEvent.KEYCODE_VOLUME_UP
+                || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
+                || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE
+                || keyCode == KeyEvent.KEYCODE_POWER
+                || keyCode == KeyEvent.KEYCODE_WAKEUP
+                || keyCode == KeyEvent.KEYCODE_SLEEP;
+        if (isAllowed) {
+            return super.dispatchKeyEvent(event);
+        }
+        return true; // Consume any other key (Netflix, Prime, 9-Square, Assistant, etc.)
     }
 
     @Override
