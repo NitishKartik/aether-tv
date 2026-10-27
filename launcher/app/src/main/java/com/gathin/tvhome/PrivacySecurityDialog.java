@@ -111,16 +111,16 @@ public final class PrivacySecurityDialog extends Dialog {
     private void refreshUI() {
         boolean enabled = lockManager.isLockEnabled();
         if (txtLockState != null) {
-            txtLockState.setText(enabled ? "ENABLED" : "DISABLED");
+            txtLockState.setText(enabled ? "Enabled" : "Disabled");
             txtLockState.setTextColor(enabled ? Color.parseColor("#FF00E676") : Color.parseColor("#FFFF5252"));
         }
 
         int currentMins = lockManager.getAutoRelockMinutes();
         if (txtAutoLockTimeout != null) {
-            String label = "15 MINUTES";
+            String label = "15 Minutes";
             for (int i = 0; i < TIMEOUT_MINUTES.length; i++) {
                 if (TIMEOUT_MINUTES[i] == currentMins) {
-                    label = TIMEOUT_LABELS[i].toUpperCase();
+                    label = TIMEOUT_LABELS[i];
                     break;
                 }
             }
@@ -129,8 +129,8 @@ public final class PrivacySecurityDialog extends Dialog {
 
         boolean guard = lockManager.isMediaGuardEnabled();
         if (txtMediaGuardState != null) {
-            txtMediaGuardState.setText(guard ? "ACTIVE" : "OFF");
-            txtMediaGuardState.setTextColor(guard ? Color.parseColor("#FF00E676") : Color.parseColor("#80FFFFFF"));
+            txtMediaGuardState.setText(guard ? "Active" : "Off");
+            txtMediaGuardState.setTextColor(guard ? Color.parseColor("#FF00E676") : Color.parseColor("#B3FFFFFF"));
         }
     }
 

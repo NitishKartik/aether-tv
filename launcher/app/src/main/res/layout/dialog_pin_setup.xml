@@ -96,13 +96,13 @@
             android:id="@+id/btnPinCancel"
             style="@style/SettingsRow"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
+            android:layout_height="40dp"
             android:layout_marginTop="16dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:text="CANCEL"
+            android:paddingStart="22dp"
+            android:paddingEnd="22dp"
+            android:text="Cancel"
             android:textColor="#B3FFFFFF"
-            android:textSize="13sp"
+            android:textSize="14sp"
             android:gravity="center"
             android:fontFamily="@font/outfit_medium" />
     </LinearLayout>

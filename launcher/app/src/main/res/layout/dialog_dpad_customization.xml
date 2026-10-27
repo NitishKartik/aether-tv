@@ -30,9 +30,9 @@
                     android:layout_height="wrap_content"
                     android:text="AETHER TV // REMOTE CUSTOMIZATION"
                     android:textColor="#FF00E5FF"
-                    android:textSize="12sp"
-                    android:fontFamily="@font/outfit_medium"
-                    android:letterSpacing="0.12" />
+                    android:textSize="13sp"
+                    android:fontFamily="@font/outfit_bold"
+                    android:letterSpacing="0.08" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -48,15 +48,15 @@
                 android:id="@+id/btnDpadBack"
                 style="@style/SettingsRow"
                 android:layout_width="wrap_content"
-                android:layout_height="38dp"
+                android:layout_height="42dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="@drawable/glass_pill_bg"
-                android:paddingStart="18dp"
-                android:paddingEnd="18dp"
-                android:text="BACK TO EXIT"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="Back to Exit"
                 android:textColor="#B3FFFFFF"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:gravity="center"
                 android:fontFamily="@font/outfit_medium"
                 android:focusable="true" />
@@ -81,9 +81,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
                     android:text="SELECT REMOTE BUTTON"
-                    android:textColor="#80FFFFFF"
-                    android:textSize="12sp"
-                    android:fontFamily="@font/outfit_medium"
+                    android:textColor="#B3FFFFFF"
+                    android:textSize="13sp"
+                    android:fontFamily="@font/outfit_bold"
                     android:letterSpacing="0.08" />
 
                 <ScrollView
@@ -105,7 +105,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:background="@drawable/glass_card_bg"
+                android:background="@drawable/settings_section_card_bg"
                 android:padding="24dp">
 
                 <LinearLayout
@@ -116,10 +116,10 @@
 
                     <TextView
                         android:id="@+id/selectedKeyIcon"
-                        android:layout_width="36dp"
+                        android:layout_width="40dp"
                         android:layout_height="wrap_content"
                         android:text="🔘"
-                        android:textSize="22sp" />
+                        android:textSize="24sp" />
 
                     <TextView
                         android:id="@+id/selectedKeyTitle"
@@ -127,7 +127,7 @@
                         android:layout_height="wrap_content"
                         android:text="D-Pad Center / OK"
                         android:textColor="#FFFFFFFF"
-                        android:textSize="20sp"
+                        android:textSize="22sp"
                         android:fontFamily="@font/outfit_bold" />
                 </LinearLayout>
 
@@ -152,22 +152,22 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="DOUBLE CLICK ACTION"
+                            android:text="DOUBLE-CLICK ACTION"
                             android:textColor="#FF00E5FF"
-                            android:textSize="11sp"
-                            android:fontFamily="@font/outfit_medium"
-                            android:letterSpacing="0.1" />
+                            android:textSize="13sp"
+                            android:fontFamily="@font/outfit_bold"
+                            android:letterSpacing="0.08" />
 
                         <LinearLayout
                             android:id="@+id/rowDoubleClick"
                             style="@style/SettingsRow"
                             android:layout_width="match_parent"
-                            android:layout_height="54dp"
-                            android:layout_marginTop="6dp"
-                            android:layout_marginBottom="18dp"
+                            android:layout_height="56dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="20dp"
                             android:background="@drawable/glass_pill_bg"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
+                            android:paddingStart="18dp"
+                            android:paddingEnd="18dp"
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
                             android:focusable="true">
@@ -179,15 +179,15 @@
                                 android:layout_weight="1"
                                 android:text="None (Default)"
                                 android:textColor="#FFFFFFFF"
-                                android:textSize="15sp"
+                                android:textSize="16sp"
                                 android:fontFamily="@font/outfit_medium" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="CHANGE ➔"
+                                android:text="Change ➔"
                                 android:textColor="#FF00E5FF"
-                                android:textSize="11sp"
+                                android:textSize="13sp"
                                 android:fontFamily="@font/outfit_bold" />
                         </LinearLayout>
 
@@ -195,22 +195,22 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="TRIPLE CLICK ACTION"
+                            android:text="TRIPLE-CLICK ACTION"
                             android:textColor="#FF00E5FF"
-                            android:textSize="11sp"
-                            android:fontFamily="@font/outfit_medium"
-                            android:letterSpacing="0.1" />
+                            android:textSize="13sp"
+                            android:fontFamily="@font/outfit_bold"
+                            android:letterSpacing="0.08" />
 
                         <LinearLayout
                             android:id="@+id/rowTripleClick"
                             style="@style/SettingsRow"
                             android:layout_width="match_parent"
-                            android:layout_height="54dp"
-                            android:layout_marginTop="6dp"
-                            android:layout_marginBottom="18dp"
+                            android:layout_height="56dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="20dp"
                             android:background="@drawable/glass_pill_bg"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
+                            android:paddingStart="18dp"
+                            android:paddingEnd="18dp"
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
                             android:focusable="true">
@@ -222,15 +222,15 @@
                                 android:layout_weight="1"
                                 android:text="None (Default)"
                                 android:textColor="#FFFFFFFF"
-                                android:textSize="15sp"
+                                android:textSize="16sp"
                                 android:fontFamily="@font/outfit_medium" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="CHANGE ➔"
+                                android:text="Change ➔"
                                 android:textColor="#FF00E5FF"
-                                android:textSize="11sp"
+                                android:textSize="13sp"
                                 android:fontFamily="@font/outfit_bold" />
                         </LinearLayout>
 
@@ -238,22 +238,22 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="LONG PRESS ACTION"
+                            android:text="LONG-PRESS ACTION"
                             android:textColor="#FF00E5FF"
-                            android:textSize="11sp"
-                            android:fontFamily="@font/outfit_medium"
-                            android:letterSpacing="0.1" />
+                            android:textSize="13sp"
+                            android:fontFamily="@font/outfit_bold"
+                            android:letterSpacing="0.08" />
 
                         <LinearLayout
                             android:id="@+id/rowLongPress"
                             style="@style/SettingsRow"
                             android:layout_width="match_parent"
-                            android:layout_height="54dp"
-                            android:layout_marginTop="6dp"
-                            android:layout_marginBottom="18dp"
+                            android:layout_height="56dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="20dp"
                             android:background="@drawable/glass_pill_bg"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
+                            android:paddingStart="18dp"
+                            android:paddingEnd="18dp"
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
                             android:focusable="true">
@@ -265,15 +265,15 @@
                                 android:layout_weight="1"
                                 android:text="None (Default)"
                                 android:textColor="#FFFFFFFF"
-                                android:textSize="15sp"
+                                android:textSize="16sp"
                                 android:fontFamily="@font/outfit_medium" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="CHANGE ➔"
+                                android:text="Change ➔"
                                 android:textColor="#FF00E5FF"
-                                android:textSize="11sp"
+                                android:textSize="13sp"
                                 android:fontFamily="@font/outfit_bold" />
                         </LinearLayout>
 
@@ -281,22 +281,22 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="LONG PRESS HOLD THRESHOLD"
+                            android:text="HOLD DURATION THRESHOLD"
                             android:textColor="#FF00E5FF"
-                            android:textSize="11sp"
-                            android:fontFamily="@font/outfit_medium"
-                            android:letterSpacing="0.1" />
+                            android:textSize="13sp"
+                            android:fontFamily="@font/outfit_bold"
+                            android:letterSpacing="0.08" />
 
                         <LinearLayout
                             android:id="@+id/rowHoldDuration"
                             style="@style/SettingsRow"
                             android:layout_width="match_parent"
-                            android:layout_height="54dp"
-                            android:layout_marginTop="6dp"
-                            android:layout_marginBottom="18dp"
+                            android:layout_height="56dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="20dp"
                             android:background="@drawable/glass_pill_bg"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
+                            android:paddingStart="18dp"
+                            android:paddingEnd="18dp"
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
                             android:focusable="true">
@@ -314,9 +314,9 @@
                                 android:id="@+id/txtHoldDuration"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="1.0 SECOND"
+                                android:text="1.0s"
                                 android:textColor="#FF00E676"
-                                android:textSize="12sp"
+                                android:textSize="14sp"
                                 android:fontFamily="@font/outfit_bold" />
                         </LinearLayout>
 

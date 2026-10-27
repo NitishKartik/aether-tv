@@ -30,9 +30,9 @@
                     android:layout_height="wrap_content"
                     android:text="AETHER TV // SYSTEM SECURITY"
                     android:textColor="#FF00E5FF"
-                    android:textSize="12sp"
-                    android:fontFamily="@font/outfit_medium"
-                    android:letterSpacing="0.12" />
+                    android:textSize="13sp"
+                    android:fontFamily="@font/outfit_bold"
+                    android:letterSpacing="0.08" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -55,13 +55,13 @@
                     android:id="@+id/btnPrivacyBack"
                     style="@style/SettingsRow"
                     android:layout_width="wrap_content"
-                    android:layout_height="38dp"
+                    android:layout_height="42dp"
                     android:background="@drawable/glass_pill_bg"
-                    android:paddingStart="18dp"
-                    android:paddingEnd="18dp"
-                    android:text="BACK TO EXIT"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="Back to Exit"
                     android:textColor="#B3FFFFFF"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:gravity="center"
                     android:fontFamily="@font/outfit_medium"
                     android:focusable="true" />
@@ -84,20 +84,23 @@
                     android:id="@+id/rowLockToggle"
                     style="@style/SettingsRow"
                     android:layout_width="match_parent"
-                    android:layout_height="64dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="72dp"
                     android:layout_marginBottom="12dp"
                     android:background="@drawable/glass_card_bg"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp"
+                    android:paddingStart="22dp"
+                    android:paddingEnd="22dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:focusable="true">
 
                     <TextView
-                        android:layout_width="40dp"
+                        android:layout_width="44dp"
                         android:layout_height="wrap_content"
                         android:text="🔒"
-                        android:textSize="22sp" />
+                        android:textSize="24sp" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -110,15 +113,16 @@
                             android:layout_height="wrap_content"
                             android:text="macOS Lock Screen"
                             android:textColor="#FFFFFFFF"
-                            android:textSize="17sp"
+                            android:textSize="18sp"
                             android:fontFamily="@font/outfit_medium" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
                             android:text="Require 4-digit PIN before allowing TV navigation"
-                            android:textColor="#80FFFFFF"
-                            android:textSize="12sp"
+                            android:textColor="#B3FFFFFF"
+                            android:textSize="14sp"
                             android:fontFamily="@font/outfit_regular" />
                     </LinearLayout>
 
@@ -126,14 +130,16 @@
                         android:id="@+id/txtLockState"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:minHeight="36dp"
                         android:background="@drawable/glass_pill_bg"
-                        android:paddingStart="14dp"
-                        android:paddingEnd="14dp"
-                        android:paddingTop="6dp"
-                        android:paddingBottom="6dp"
-                        android:text="ENABLED"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingTop="7dp"
+                        android:paddingBottom="7dp"
+                        android:text="Enabled"
                         android:textColor="#FF00E676"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
+                        android:gravity="center"
                         android:fontFamily="@font/outfit_bold" />
                 </LinearLayout>
 
@@ -142,20 +148,23 @@
                     android:id="@+id/rowChangePin"
                     style="@style/SettingsRow"
                     android:layout_width="match_parent"
-                    android:layout_height="64dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="72dp"
                     android:layout_marginBottom="12dp"
                     android:background="@drawable/glass_card_bg"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp"
+                    android:paddingStart="22dp"
+                    android:paddingEnd="22dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:focusable="true">
 
                     <TextView
-                        android:layout_width="40dp"
+                        android:layout_width="44dp"
                         android:layout_height="wrap_content"
                         android:text="🔑"
-                        android:textSize="22sp" />
+                        android:textSize="24sp" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -168,29 +177,32 @@
                             android:layout_height="wrap_content"
                             android:text="Change Security PIN"
                             android:textColor="#FFFFFFFF"
-                            android:textSize="17sp"
+                            android:textSize="18sp"
                             android:fontFamily="@font/outfit_medium" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
                             android:text="Configure custom 4-digit lockscreen authentication code"
-                            android:textColor="#80FFFFFF"
-                            android:textSize="12sp"
+                            android:textColor="#B3FFFFFF"
+                            android:textSize="14sp"
                             android:fontFamily="@font/outfit_regular" />
                     </LinearLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:minHeight="36dp"
                         android:background="@drawable/glass_pill_bg"
-                        android:paddingStart="14dp"
-                        android:paddingEnd="14dp"
-                        android:paddingTop="6dp"
-                        android:paddingBottom="6dp"
-                        android:text="UPDATE PIN ➔"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingTop="7dp"
+                        android:paddingBottom="7dp"
+                        android:text="Update PIN ➔"
                         android:textColor="#FF00E5FF"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
+                        android:gravity="center"
                         android:fontFamily="@font/outfit_medium" />
                 </LinearLayout>
 
@@ -199,20 +211,23 @@
                     android:id="@+id/rowAutoLockTimeout"
                     style="@style/SettingsRow"
                     android:layout_width="match_parent"
-                    android:layout_height="64dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="72dp"
                     android:layout_marginBottom="12dp"
                     android:background="@drawable/glass_card_bg"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp"
+                    android:paddingStart="22dp"
+                    android:paddingEnd="22dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:focusable="true">
 
                     <TextView
-                        android:layout_width="40dp"
+                        android:layout_width="44dp"
                         android:layout_height="wrap_content"
                         android:text="⏱️"
-                        android:textSize="22sp" />
+                        android:textSize="24sp" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -225,15 +240,16 @@
                             android:layout_height="wrap_content"
                             android:text="Auto-Lock Inactivity Timeout"
                             android:textColor="#FFFFFFFF"
-                            android:textSize="17sp"
+                            android:textSize="18sp"
                             android:fontFamily="@font/outfit_medium" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
                             android:text="Automatically lock TV after idle duration"
-                            android:textColor="#80FFFFFF"
-                            android:textSize="12sp"
+                            android:textColor="#B3FFFFFF"
+                            android:textSize="14sp"
                             android:fontFamily="@font/outfit_regular" />
                     </LinearLayout>
 
@@ -241,14 +257,16 @@
                         android:id="@+id/txtAutoLockTimeout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:minHeight="36dp"
                         android:background="@drawable/glass_pill_bg"
-                        android:paddingStart="14dp"
-                        android:paddingEnd="14dp"
-                        android:paddingTop="6dp"
-                        android:paddingBottom="6dp"
-                        android:text="15 MINUTES"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingTop="7dp"
+                        android:paddingBottom="7dp"
+                        android:text="15 Minutes"
                         android:textColor="#FF00E5FF"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
+                        android:gravity="center"
                         android:fontFamily="@font/outfit_bold" />
                 </LinearLayout>
 
@@ -257,20 +275,23 @@
                     android:id="@+id/rowMediaGuard"
                     style="@style/SettingsRow"
                     android:layout_width="match_parent"
-                    android:layout_height="64dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="72dp"
                     android:layout_marginBottom="12dp"
                     android:background="@drawable/glass_card_bg"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp"
+                    android:paddingStart="22dp"
+                    android:paddingEnd="22dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:focusable="true">
 
                     <TextView
-                        android:layout_width="40dp"
+                        android:layout_width="44dp"
                         android:layout_height="wrap_content"
                         android:text="🎵"
-                        android:textSize="22sp" />
+                        android:textSize="24sp" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -283,15 +304,16 @@
                             android:layout_height="wrap_content"
                             android:text="Smart Media Guard"
                             android:textColor="#FFFFFFFF"
-                            android:textSize="17sp"
+                            android:textSize="18sp"
                             android:fontFamily="@font/outfit_medium" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
                             android:text="Keep unlocked while music or video plays in background (SmartTube, etc.)"
-                            android:textColor="#80FFFFFF"
-                            android:textSize="12sp"
+                            android:textColor="#B3FFFFFF"
+                            android:textSize="14sp"
                             android:fontFamily="@font/outfit_regular" />
                     </LinearLayout>
 
@@ -299,14 +321,16 @@
                         android:id="@+id/txtMediaGuardState"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:minHeight="36dp"
                         android:background="@drawable/glass_pill_bg"
-                        android:paddingStart="14dp"
-                        android:paddingEnd="14dp"
-                        android:paddingTop="6dp"
-                        android:paddingBottom="6dp"
-                        android:text="ACTIVE"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingTop="7dp"
+                        android:paddingBottom="7dp"
+                        android:text="Active"
                         android:textColor="#FF00E676"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
+                        android:gravity="center"
                         android:fontFamily="@font/outfit_bold" />
                 </LinearLayout>
 
@@ -315,20 +339,23 @@
                     android:id="@+id/rowLockNow"
                     style="@style/SettingsRow"
                     android:layout_width="match_parent"
-                    android:layout_height="64dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="72dp"
                     android:layout_marginBottom="12dp"
                     android:background="@drawable/glass_card_bg"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp"
+                    android:paddingStart="22dp"
+                    android:paddingEnd="22dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:focusable="true">
 
                     <TextView
-                        android:layout_width="40dp"
+                        android:layout_width="44dp"
                         android:layout_height="wrap_content"
                         android:text="🚨"
-                        android:textSize="22sp" />
+                        android:textSize="24sp" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -341,29 +368,32 @@
                             android:layout_height="wrap_content"
                             android:text="Lock Screen Now"
                             android:textColor="#FFFFFFFF"
-                            android:textSize="17sp"
+                            android:textSize="18sp"
                             android:fontFamily="@font/outfit_medium" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
                             android:text="Immediately lock launcher and display macOS lockscreen"
-                            android:textColor="#80FFFFFF"
-                            android:textSize="12sp"
+                            android:textColor="#B3FFFFFF"
+                            android:textSize="14sp"
                             android:fontFamily="@font/outfit_regular" />
                     </LinearLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:minHeight="36dp"
                         android:background="@drawable/glass_pill_bg"
-                        android:paddingStart="14dp"
-                        android:paddingEnd="14dp"
-                        android:paddingTop="6dp"
-                        android:paddingBottom="6dp"
-                        android:text="LOCK NOW 🔒"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingTop="7dp"
+                        android:paddingBottom="7dp"
+                        android:text="Lock Now 🔒"
                         android:textColor="#FFFF5252"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
+                        android:gravity="center"
                         android:fontFamily="@font/outfit_bold" />
                 </LinearLayout>
 

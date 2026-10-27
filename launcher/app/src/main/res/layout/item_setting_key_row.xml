@@ -2,21 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/SettingsRow"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
+    android:layout_height="52dp"
     android:layout_marginBottom="8dp"
     android:background="@drawable/glass_pill_bg"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
+    android:paddingStart="18dp"
+    android:paddingEnd="18dp"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:focusable="true">
 
     <TextView
         android:id="@+id/keyRowIcon"
-        android:layout_width="32dp"
+        android:layout_width="36dp"
         android:layout_height="wrap_content"
         android:text="🔘"
-        android:textSize="18sp" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/keyRowTitle"
@@ -25,7 +25,7 @@
         android:layout_weight="1"
         android:text="D-Pad Center / OK"
         android:textColor="#FFFFFFFF"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:fontFamily="@font/outfit_medium" />
 
     <TextView
@@ -34,6 +34,6 @@
         android:layout_height="wrap_content"
         android:text="●"
         android:textColor="#FF00E5FF"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:visibility="gone" />
 </LinearLayout>

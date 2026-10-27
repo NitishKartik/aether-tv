@@ -236,18 +236,18 @@ public final class DPadCustomizationDialog extends Dialog {
 
         if (txtDoubleClickAction != null) {
             txtDoubleClickAction.setText(remapManager.getActionLabel(doubleAction));
-            txtDoubleClickAction.setTextColor(doubleAction.equals(KeyRemapManager.ACTION_NONE) ? Color.parseColor("#80FFFFFF") : Color.parseColor("#FF00E5FF"));
+            txtDoubleClickAction.setTextColor(doubleAction.equals(KeyRemapManager.ACTION_NONE) ? Color.parseColor("#B3FFFFFF") : Color.parseColor("#FF00E5FF"));
         }
         if (txtTripleClickAction != null) {
             txtTripleClickAction.setText(remapManager.getActionLabel(tripleAction));
-            txtTripleClickAction.setTextColor(tripleAction.equals(KeyRemapManager.ACTION_NONE) ? Color.parseColor("#80FFFFFF") : Color.parseColor("#FF00E5FF"));
+            txtTripleClickAction.setTextColor(tripleAction.equals(KeyRemapManager.ACTION_NONE) ? Color.parseColor("#B3FFFFFF") : Color.parseColor("#FF00E5FF"));
         }
         if (txtLongPressAction != null) {
             txtLongPressAction.setText(remapManager.getActionLabel(longAction));
-            txtLongPressAction.setTextColor(longAction.equals(KeyRemapManager.ACTION_NONE) ? Color.parseColor("#80FFFFFF") : Color.parseColor("#FF00E5FF"));
+            txtLongPressAction.setTextColor(longAction.equals(KeyRemapManager.ACTION_NONE) ? Color.parseColor("#B3FFFFFF") : Color.parseColor("#FF00E5FF"));
         }
         if (txtHoldDuration != null) {
-            txtHoldDuration.setText(String.format("%.1f SECONDS", durationMs / 1000.0f));
+            txtHoldDuration.setText(String.format(java.util.Locale.US, "%.1fs", durationMs / 1000.0f));
         }
     }
 
