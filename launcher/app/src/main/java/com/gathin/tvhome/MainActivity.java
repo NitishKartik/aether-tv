@@ -137,6 +137,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private String sourcePanelExtra;
     private boolean coocaaSources;
 
+    private KeyRemapManager keyRemapManager;
     private AppAdapter adapter;
     private RecyclerView grid;
     private FrameLayout root;
@@ -727,6 +728,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
         sceneManager = new SceneManager(this);
         lockManager = new LockManager(this);
+        keyRemapManager = KeyRemapManager.getInstance(this);
         aiUsageManager = new AiUsageManager(this);
         entertainmentManager = new EntertainmentManager(this);
 
@@ -824,9 +826,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             ((TextView) btnSettings).setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_home_settings_pill, 0, 0, 0);
         }
         btnSettings.setOnClickListener(v -> {
-            if (launcherSettingsButton) startActivityForResult(
+            startActivityForResult(
                     new Intent(this, LauncherSettingsActivity.class), LAUNCHER_SETTINGS_REQUEST);
-            else open(systemIntent(Settings.ACTION_SETTINGS));
         });
         btnReorder = findViewById(R.id.btnReorder);
         btnReorder.setOnClickListener(v -> toggleReorder());
@@ -1210,13 +1211,18 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == LAUNCHER_SETTINGS_REQUEST && resultCode == RESULT_OK
-                && data != null && data.getBooleanExtra(LauncherSettingsActivity.EXTRA_REORDER, false)) {
-            getIntent().putExtra(LauncherSettingsActivity.EXTRA_REORDER, true);
-            // The old activity must not consume the pending action, or rebuild a second time in onResume.
-            settingsRecreationPending = true;
-            settingsRevision = settingsRevision();
-            recreate();
+        if (requestCode == LAUNCHER_SETTINGS_REQUEST && resultCode == RESULT_OK && data != null) {
+            if (data.getBooleanExtra(LauncherSettingsActivity.EXTRA_LOCK_NOW, false)) {
+                showLockScreen();
+                return;
+            }
+            if (data.getBooleanExtra(LauncherSettingsActivity.EXTRA_REORDER, false)) {
+                getIntent().putExtra(LauncherSettingsActivity.EXTRA_REORDER, true);
+                // The old activity must not consume the pending action, or rebuild a second time in onResume.
+                settingsRecreationPending = true;
+                settingsRevision = settingsRevision();
+                recreate();
+            }
         }
     }
 
@@ -1347,6 +1353,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     private void restartIdleClock() {
         root.removeCallbacks(showIdleClock);
+        SharedPreferences settingsPrefs = getSharedPreferences(Config.SETTINGS_NAME, MODE_PRIVATE);
+        int screensaverMinutes = settingsPrefs.getInt("screensaver_idle_minutes", 5);
+        idleClockMs = screensaverMinutes * MINUTE_MS;
         if (idleClockMs > 0) root.postDelayed(showIdleClock, idleClockMs);
     }
 
@@ -1450,6 +1459,47 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     /** Blue the glass turns while reorder mode is on. */
     private static final int REORDER_ACCENT = 0xFF6EC1FF;
 
+    private void executeCustomAction(String actionStr, String appPkg) {
+        if (actionStr == null) return;
+        switch (actionStr) {
+            case KeyRemapManager.ACTION_LOCK_SCREEN:
+                showLockScreen();
+                break;
+            case KeyRemapManager.ACTION_SCREENSAVER:
+                startActivity(new Intent(this, ClockActivity.class));
+                break;
+            case KeyRemapManager.ACTION_APP_LIBRARY:
+                onLibraryRequested();
+                break;
+            case KeyRemapManager.ACTION_GAME_ARENA:
+                showGameSelector();
+                break;
+            case KeyRemapManager.ACTION_LAUNCHER_SETTINGS:
+                startActivityForResult(new Intent(this, LauncherSettingsActivity.class), LAUNCHER_SETTINGS_REQUEST);
+                break;
+            case KeyRemapManager.ACTION_TV_SETTINGS:
+                open(systemIntent(Settings.ACTION_SETTINGS));
+                break;
+            case KeyRemapManager.ACTION_MUTE_TOGGLE:
+                try {
+                    android.media.AudioManager am = (android.media.AudioManager) getSystemService(AUDIO_SERVICE);
+                    if (am != null) {
+                        am.adjustStreamVolume(android.media.AudioManager.STREAM_MUSIC, android.media.AudioManager.ADJUST_TOGGLE_MUTE, android.media.AudioManager.FLAG_SHOW_UI);
+                    }
+                } catch (Exception ignored) {}
+                break;
+            case KeyRemapManager.ACTION_OPEN_APP:
+                if (appPkg != null && !appPkg.isEmpty()) {
+                    try {
+                        Intent launch = getPackageManager().getLeanbackLaunchIntentForPackage(appPkg);
+                        if (launch == null) launch = getPackageManager().getLaunchIntentForPackage(appPkg);
+                        if (launch != null) startActivity(launch);
+                    } catch (Exception ignored) {}
+                }
+                break;
+        }
+    }
+
     /**
      * Reorder mode (top-bar button). While it is on, every key comes here first:
      * - nothing carried: arrows move focus as usual; OK on a tile picks it up instead of opening the app;
@@ -1477,6 +1527,12 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 return activeLockDialog.dispatchKeyEvent(event);
             }
             return true;
+        }
+
+        // Custom D-Pad & Remote key remap actions
+        if (keyRemapManager != null) {
+            boolean handled = keyRemapManager.handleKeyEvent(event, this::executeCustomAction);
+            if (handled) return true;
         }
 
         // 1. Intercept Xiaomi Remote 9-Square "All Apps" Button

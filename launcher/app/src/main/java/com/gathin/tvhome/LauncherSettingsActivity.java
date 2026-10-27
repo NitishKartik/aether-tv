@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -19,24 +20,46 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** Remote-friendly settings owned by the launcher; system settings stay one row away. */
+/**
+ * Aether TV Launcher Settings Activity.
+ * Supports Privacy & Security, D-Pad Remote Customization, Screensaver, and Grid Layout.
+ */
 public final class LauncherSettingsActivity extends Activity {
+
     @Override
     protected void attachBaseContext(android.content.Context base) {
-        super.attachBaseContext(LauncherLocale.wrap(base));   // locale
+        super.attachBaseContext(LauncherLocale.wrap(base));
     }
 
     static final String EXTRA_REORDER = "com.gathin.tvhome.extra.REORDER_FROM_SETTINGS";
+    static final String EXTRA_LOCK_NOW = "com.gathin.tvhome.extra.LOCK_NOW";
+
+    private static final int[] SCREENSAVER_MINUTES = {0, 1, 2, 5, 10, 15, 30, 60};
+    private static final String[] SCREENSAVER_LABELS = {
+            "Never / Off", "1 Minute", "2 Minutes", "5 Minutes (Default)",
+            "10 Minutes", "15 Minutes", "30 Minutes", "1 Hour"
+    };
+
     private SharedPreferences choices;
+    private LockManager lockManager;
+    private KeyRemapManager remapManager;
+
     private final TextView[] columnChoices = new TextView[4];
     private final TextView[] rowChoices = new TextView[4];
     private static final int[] DOCK_OPACITIES = {100, 70, 50, 30};
     private final TextView[] dockChoices = new TextView[DOCK_OPACITIES.length];
+
+    private TextView txtPrivacyLockBadge;
+    private TextView txtPrivacyTimeoutBadge;
+    private TextView txtDpadStatusBadge;
+    private TextView txtScreensaverTimeout;
+
     private TextView wallpaperChoice;
     private TextView animationsChoice;
     private TextView advancedChoice;
     private TextView followThemeChoice;
     private TextView openOnStartChoice;
+
     private int columns;
     private int rowsBelowDock;
     private int dockOpacity;
@@ -48,13 +71,50 @@ public final class LauncherSettingsActivity extends Activity {
         super.onCreate(state);
         setContentView(R.layout.activity_launcher_settings);
         choices = getSharedPreferences(Config.SETTINGS_NAME, MODE_PRIVATE);
+        lockManager = new LockManager(this);
+        remapManager = KeyRemapManager.getInstance(this);
+
         Config config = Config.load(this);
+
+        View btnBack = findViewById(R.id.btnSettingsBack);
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
+            attachFocusAnimation(btnBack);
+        }
+
+        // Section 1: Privacy & Security
+        View privacyChoice = findViewById(R.id.privacySecurityChoice);
+        txtPrivacyLockBadge = findViewById(R.id.txtPrivacyLockBadge);
+        txtPrivacyTimeoutBadge = findViewById(R.id.txtPrivacyTimeoutBadge);
+        if (privacyChoice != null) {
+            privacyChoice.setOnClickListener(v -> showPrivacySecurityDialog());
+            attachFocusAnimation(privacyChoice);
+        }
+
+        // Section 2: D-Pad & Remote Customization
+        View dpadChoice = findViewById(R.id.dpadCustomizationChoice);
+        txtDpadStatusBadge = findViewById(R.id.txtDpadStatusBadge);
+        if (dpadChoice != null) {
+            dpadChoice.setOnClickListener(v -> showDpadCustomizationDialog());
+            attachFocusAnimation(dpadChoice);
+        }
+
+        // Section 3: Screensaver Timeout
+        View screensaverChoice = findViewById(R.id.screensaverChoice);
+        txtScreensaverTimeout = findViewById(R.id.txtScreensaverTimeout);
+        if (screensaverChoice != null) {
+            screensaverChoice.setOnClickListener(v -> showScreensaverPicker(config));
+            attachFocusAnimation(screensaverChoice);
+        }
+
         View reorderChoice = findViewById(R.id.reorderChoice);
         reorderChoice.setVisibility(config.launcherSettingsButton ? View.VISIBLE : View.GONE);
         reorderChoice.setOnClickListener(v -> {
             setResult(RESULT_OK, new Intent().putExtra(EXTRA_REORDER, true));
             finish();
         });
+        attachFocusAnimation(reorderChoice);
+
         columns = config.columns;
         rowsBelowDock = config.rowsBelowDock;
         dockOpacity = config.dockOpacity;
@@ -72,6 +132,7 @@ public final class LauncherSettingsActivity extends Activity {
                 changed();
                 refresh();
             });
+            attachFocusAnimation(columnChoices[i]);
         }
         int[] rowIds = {R.id.rows0, R.id.rows1, R.id.rows2, R.id.rows3};
         for (int i = 0; i < rowIds.length; i++) {
@@ -84,6 +145,7 @@ public final class LauncherSettingsActivity extends Activity {
                 changed();
                 refresh();
             });
+            attachFocusAnimation(rowChoices[i]);
         }
         int[] dockIds = {R.id.dock100, R.id.dock70, R.id.dock50, R.id.dock30};
         for (int i = 0; i < dockIds.length; i++) {
@@ -96,16 +158,19 @@ public final class LauncherSettingsActivity extends Activity {
                 changed();
                 refresh();
             });
+            attachFocusAnimation(dockChoices[i]);
         }
-        // Keep the numeric choices increasing in the Hebrew reading direction. Reorder the
-        // actual views so D-pad focus follows their positions without changing the saved values.
+
         if (getResources().getBoolean(R.bool.rtl_app_grid)) {
             reverseRow(columnChoices);
             reverseRow(rowChoices);
             reverseRow(dockChoices);
         }
+
         wallpaperChoice = findViewById(R.id.wallpaperChoice);
         wallpaperChoice.setOnClickListener(v -> showWallpaperPicker());
+        attachFocusAnimation(wallpaperChoice);
+
         animationsChoice = findViewById(R.id.animationsChoice);
         animationsChoice.setOnClickListener(v -> {
             animations = !animations;
@@ -115,6 +180,8 @@ public final class LauncherSettingsActivity extends Activity {
             changed();
             refresh();
         });
+        attachFocusAnimation(animationsChoice);
+
         advancedChoice = findViewById(R.id.advancedChoice);
         advancedChoice.setOnClickListener(v -> {
             if (advancedEffects) {
@@ -128,17 +195,22 @@ public final class LauncherSettingsActivity extends Activity {
                         .show();
             }
         });
+        attachFocusAnimation(advancedChoice);
+
         openOnStartChoice = findViewById(R.id.openOnStartChoice);
         if (config.openOnStartChoice) {
             openOnStartChoice.setVisibility(View.VISIBLE);
             openOnStartChoice.setOnClickListener(v -> showOpenOnStartPicker());
+            attachFocusAnimation(openOnStartChoice);
         }
+
         followThemeChoice = findViewById(R.id.followThemeChoice);
         followThemeChoice.setOnClickListener(v -> {
             if (!hasOnTvChoices()) return;
             choices.edit().remove("columns").remove(Config.ROWS_BELOW_DOCK_KEY).remove("animations")
                     .remove("advanced_effects").remove(Config.WALLPAPER_CHOICE_KEY)
-                    .remove(Config.DOCK_OPACITY_KEY).remove(OpenOnStart.KEY).commit();
+                    .remove(Config.DOCK_OPACITY_KEY).remove(OpenOnStart.KEY)
+                    .remove("screensaver_idle_minutes").commit();
             Config current = Config.load(this);
             columns = current.columns;
             rowsBelowDock = current.rowsBelowDock;
@@ -148,15 +220,87 @@ public final class LauncherSettingsActivity extends Activity {
             changed();
             refresh();
         });
-        findViewById(R.id.defaultHomeChoice).setOnClickListener(v -> {
+        attachFocusAnimation(followThemeChoice);
+
+        View defaultHome = findViewById(R.id.defaultHomeChoice);
+        defaultHome.setOnClickListener(v -> {
             Toast.makeText(this, R.string.home_settings_help, Toast.LENGTH_LONG).show();
             open(new Intent(Settings.ACTION_HOME_SETTINGS));
         });
-        findViewById(R.id.tvSettingsChoice).setOnClickListener(v ->
+        attachFocusAnimation(defaultHome);
+
+        View tvSettings = findViewById(R.id.tvSettingsChoice);
+        tvSettings.setOnClickListener(v ->
                 open(SystemSettings.intent(this, Settings.ACTION_SETTINGS)));
+        attachFocusAnimation(tvSettings);
+
         refresh();
-        if (config.launcherSettingsButton) reorderChoice.requestFocus();
+
+        if (privacyChoice != null) privacyChoice.requestFocus();
+        else if (config.launcherSettingsButton) reorderChoice.requestFocus();
         else columnChoices[Math.max(0, Math.min(columns - 4, 3))].requestFocus();
+    }
+
+    private void attachFocusAnimation(View v) {
+        v.setOnFocusChangeListener((view, hasFocus) -> {
+            if (hasFocus) {
+                view.setScaleX(1.03f);
+                view.setScaleY(1.03f);
+                SoundManager.getInstance(this).playKeyTap();
+            } else {
+                view.setScaleX(1.0f);
+                view.setScaleY(1.0f);
+            }
+        });
+    }
+
+    private void showPrivacySecurityDialog() {
+        SoundManager.getInstance(this).playDialogOpen();
+        PrivacySecurityDialog dialog = new PrivacySecurityDialog(this, lockManager, new PrivacySecurityDialog.PrivacySecurityListener() {
+            @Override
+            public void onLockNowRequested() {
+                setResult(RESULT_OK, new Intent().putExtra(EXTRA_LOCK_NOW, true));
+                finish();
+            }
+
+            @Override
+            public void onSecuritySettingsChanged() {
+                refresh();
+                changed();
+            }
+        });
+        dialog.show();
+    }
+
+    private void showDpadCustomizationDialog() {
+        SoundManager.getInstance(this).playDialogOpen();
+        DPadCustomizationDialog dialog = new DPadCustomizationDialog(this);
+        dialog.setOnDismissListener(d -> refresh());
+        dialog.show();
+    }
+
+    private void showScreensaverPicker(Config config) {
+        int currentMinutes = choices.getInt("screensaver_idle_minutes", config.homeIdleClockMinutes);
+        int checked = 3; // 5 min default
+        for (int i = 0; i < SCREENSAVER_MINUTES.length; i++) {
+            if (SCREENSAVER_MINUTES[i] == currentMinutes) {
+                checked = i;
+                break;
+            }
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Screensaver Idle Timeout")
+                .setSingleChoiceItems(SCREENSAVER_LABELS, checked, (dialog, which) -> {
+                    dialog.dismiss();
+                    int chosen = SCREENSAVER_MINUTES[which];
+                    choices.edit().putInt("screensaver_idle_minutes", chosen).apply();
+                    changed();
+                    SoundManager.getInstance(this).playSelect();
+                    refresh();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void reverseRow(TextView[] views) {
@@ -169,7 +313,6 @@ public final class LauncherSettingsActivity extends Activity {
         File dir = Config.dir(this);
         List<File> images = new java.util.ArrayList<>(WallpaperRotation.images(
                 dir == null ? null : new File(dir, "wallpapers")));
-        // A theme with a single wallpaper.jpg offers that picture too (Config maps the choice back to it).
         File single = dir == null ? null : new File(dir, Config.WALLPAPER_NAME);
         if (single != null && single.isFile()) images.add(0, single);
         String[] labels = new String[images.size() + 1];
@@ -201,7 +344,6 @@ public final class LauncherSettingsActivity extends Activity {
                 .show();
     }
 
-    /** Off, then every app with a TV entry point by name. Saved at once; it is read on the next boot. */
     private void showOpenOnStartPicker() {
         PackageManager pm = getPackageManager();
         List<String[]> apps = new ArrayList<>();
@@ -237,7 +379,6 @@ public final class LauncherSettingsActivity extends Activity {
                 .show();
     }
 
-    /** The picked app's name, its package when it is gone, or Off. */
     private String openOnStartLabel() {
         String pkg = choices.getString(OpenOnStart.KEY, "");
         if (pkg.isEmpty()) return getString(R.string.off);
@@ -257,10 +398,6 @@ public final class LauncherSettingsActivity extends Activity {
         return -1;
     }
 
-    /**
-     * A choice was saved. Home rebuilds when it next resumes because the change count moved, whether these
-     * settings are left with Back or with the remote's Home button (which cancels the activity result).
-     */
     private void changed() {
         setResult(RESULT_OK);
         choices.edit().putLong(Config.SETTINGS_REVISION_KEY,
@@ -275,6 +412,30 @@ public final class LauncherSettingsActivity extends Activity {
     }
 
     private void refresh() {
+        // Privacy & Security badges
+        boolean lockEnabled = lockManager.isLockEnabled();
+        if (txtPrivacyLockBadge != null) {
+            txtPrivacyLockBadge.setText(lockEnabled ? "PROTECTED" : "DISABLED");
+            txtPrivacyLockBadge.setTextColor(lockEnabled ? Color.parseColor("#FF00E676") : Color.parseColor("#FFFF5252"));
+        }
+        int autoLockMinutes = lockManager.getAutoRelockMinutes();
+        if (txtPrivacyTimeoutBadge != null) {
+            txtPrivacyTimeoutBadge.setText(autoLockMinutes > 0 ? (autoLockMinutes + " MIN") : "OFF");
+        }
+
+        // D-Pad Customization badge
+        if (txtDpadStatusBadge != null) {
+            boolean hasCustom = remapManager.hasAnyCustomMappings();
+            txtDpadStatusBadge.setText(hasCustom ? "CUSTOMIZED" : "CUSTOMIZE ➔");
+            txtDpadStatusBadge.setTextColor(hasCustom ? Color.parseColor("#FF00E676") : Color.parseColor("#FF00E5FF"));
+        }
+
+        // Screensaver timeout
+        int screensaverMinutes = choices.getInt("screensaver_idle_minutes", 5);
+        if (txtScreensaverTimeout != null) {
+            txtScreensaverTimeout.setText(screensaverMinutes > 0 ? (screensaverMinutes + " MINUTES") : "OFF");
+        }
+
         for (int i = 0; i < columnChoices.length; i++) {
             columnChoices[i].setSelected(columns == i + 4);
         }
@@ -303,7 +464,7 @@ public final class LauncherSettingsActivity extends Activity {
         return choices.contains("columns") || choices.contains(Config.ROWS_BELOW_DOCK_KEY)
                 || choices.contains("animations") || choices.contains("advanced_effects")
                 || choices.contains(Config.WALLPAPER_CHOICE_KEY) || choices.contains(Config.DOCK_OPACITY_KEY)
-                || choices.contains(OpenOnStart.KEY);
+                || choices.contains(OpenOnStart.KEY) || choices.contains("screensaver_idle_minutes");
     }
 
     private void open(Intent intent) {

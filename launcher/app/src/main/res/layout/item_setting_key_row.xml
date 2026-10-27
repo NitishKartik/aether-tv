@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/SettingsRow"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/glass_pill_bg"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:focusable="true">
+
+    <TextView
+        android:id="@+id/keyRowIcon"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
+        android:text="🔘"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/keyRowTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="D-Pad Center / OK"
+        android:textColor="#FFFFFFFF"
+        android:textSize="14sp"
+        android:fontFamily="@font/outfit_medium" />
+
+    <TextView
+        android:id="@+id/keyRowBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="●"
+        android:textColor="#FF00E5FF"
+        android:textSize="14sp"
+        android:visibility="gone" />
+</LinearLayout>

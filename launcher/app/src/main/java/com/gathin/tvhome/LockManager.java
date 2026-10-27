@@ -31,6 +31,7 @@ public final class LockManager {
     private static final String KEY_AUTO_RELOCK_MINUTES = "auto_relock_minutes";
     private static final String KEY_LAST_UNLOCKED_TIME = "last_unlocked_time";
     private static final String KEY_IS_LOCKED = "is_currently_locked";
+    private static final String KEY_MEDIA_GUARD = "lock_media_guard";
 
     private static final int MAX_FAILED_ATTEMPTS = 5;
     private static final int PBKDF2_ITERATIONS = 10000;
@@ -55,6 +56,25 @@ public final class LockManager {
         return prefs.getBoolean(KEY_ENABLED, false) && prefs.contains(KEY_HASH);
     }
 
+    public void setLockEnabled(boolean enabled) {
+        if (prefs != null) {
+            prefs.edit().putBoolean(KEY_ENABLED, enabled).apply();
+            if (!enabled) {
+                unlock();
+            }
+        }
+    }
+
+    public boolean isMediaGuardEnabled() {
+        return prefs != null && prefs.getBoolean(KEY_MEDIA_GUARD, true);
+    }
+
+    public void setMediaGuardEnabled(boolean enabled) {
+        if (prefs != null) {
+            prefs.edit().putBoolean(KEY_MEDIA_GUARD, enabled).apply();
+        }
+    }
+
     public boolean isCurrentlyLocked() {
         if (!isLockEnabled()) {
             return false;
@@ -68,8 +88,8 @@ public final class LockManager {
             long lastUnlocked = prefs.getLong(KEY_LAST_UNLOCKED_TIME, 0);
             long now = System.currentTimeMillis();
             if (now - lastUnlocked > timeoutMinutes * 60L * 1000L) {
-                // If media (music/video in SmartTube, YouTube, etc.) is active, defer auto-lock
-                if (isMediaPlaying()) {
+                // If media (music/video in SmartTube, YouTube, etc.) is active and media guard is on, defer auto-lock
+                if (isMediaGuardEnabled() && isMediaPlaying()) {
                     keepAlive();
                     return false;
                 }
