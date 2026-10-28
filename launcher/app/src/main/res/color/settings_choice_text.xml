@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_focused="true" android:color="#FF0D1117" />
-    <item android:color="#FFFFFFFF" />
+    <!-- Focused: Always pure white for living room 10-foot legibility -->
+    <item android:state_focused="true" android:color="#FFFFFFFF" />
+    <!-- Selected: Bright cyan highlight -->
+    <item android:state_selected="true" android:color="#FF00E5FF" />
+    <!-- Default inactive state: 80% white -->
+    <item android:color="#CCFFFFFF" />
 </selector>

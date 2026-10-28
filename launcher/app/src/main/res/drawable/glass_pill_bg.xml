@@ -1,4 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Focused AND Selected: Maximum Glow & High-Contrast Cyan-White Border -->
+    <item android:state_focused="true" android:state_selected="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="24dp" />
+            <gradient
+                android:startColor="#8000E5FF"
+                android:centerColor="#8000B0FF"
+                android:endColor="#807C4DFF"
+                android:angle="0" />
+            <stroke
+                android:width="2.5dp"
+                android:color="#FFFFFFFF" />
+        </shape>
+    </item>
+
+    <!-- Focused only: High-Contrast Cyan Border & Focus Gradient -->
     <item android:state_focused="true">
         <shape android:shape="rectangle">
             <corners android:radius="24dp" />
@@ -7,14 +24,30 @@
                 android:endColor="#667C4DFF"
                 android:angle="0" />
             <stroke
+                android:width="2.5dp"
+                android:color="#FF00E5FF" />
+        </shape>
+    </item>
+
+    <!-- Selected only: Vibrant Cyan Fill & 2dp Accent Border -->
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="24dp" />
+            <gradient
+                android:startColor="#4D00E5FF"
+                android:endColor="#4D7C4DFF"
+                android:angle="0" />
+            <stroke
                 android:width="2dp"
                 android:color="#FF00E5FF" />
         </shape>
     </item>
+
+    <!-- Default Inactive State: Semi-Opaque Translucent Glass -->
     <item>
         <shape android:shape="rectangle">
             <corners android:radius="24dp" />
-            <solid android:color="#331A2634" />
+            <solid android:color="#261A2634" />
             <stroke
                 android:width="1dp"
                 android:color="#33FFFFFF" />

@@ -187,12 +187,17 @@ public final class LauncherSettingsActivity extends Activity {
             if (advancedEffects) {
                 setAdvanced(false);
             } else {
-                new AlertDialog.Builder(this)
-                        .setTitle(R.string.advanced_effects)
-                        .setMessage(R.string.advanced_effects_warning)
-                        .setPositiveButton(R.string.enable, (dialog, which) -> setAdvanced(true))
-                        .setNegativeButton(android.R.string.cancel, null)
-                        .show();
+                GlassSelectionDialog dialog = new GlassSelectionDialog(
+                        this,
+                        getString(R.string.advanced_effects),
+                        getString(R.string.advanced_effects_warning),
+                        new String[]{"Enable Advanced Blur & Shaders", "Cancel"},
+                        -1,
+                        (d, which) -> {
+                            if (which == 0) setAdvanced(true);
+                        }
+                );
+                dialog.show();
             }
         });
         attachFocusAnimation(advancedChoice);
@@ -289,18 +294,21 @@ public final class LauncherSettingsActivity extends Activity {
             }
         }
 
-        new AlertDialog.Builder(this)
-                .setTitle("Screensaver Idle Timeout")
-                .setSingleChoiceItems(SCREENSAVER_LABELS, checked, (dialog, which) -> {
-                    dialog.dismiss();
+        GlassSelectionDialog dialog = new GlassSelectionDialog(
+                this,
+                "Screensaver Idle Timeout",
+                "Start atmospheric clock screensaver after idle duration",
+                SCREENSAVER_LABELS,
+                checked,
+                (d, which) -> {
                     int chosen = SCREENSAVER_MINUTES[which];
                     choices.edit().putInt("screensaver_idle_minutes", chosen).apply();
                     changed();
                     SoundManager.getInstance(this).playSelect();
                     refresh();
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+                }
+        );
+        dialog.show();
     }
 
     private void reverseRow(TextView[] views) {
@@ -321,10 +329,14 @@ public final class LauncherSettingsActivity extends Activity {
         String current = choices.getString(Config.WALLPAPER_CHOICE_KEY, null);
         int checked = "none".equals(current) ? images.size()
                 : indexOf(images, current);
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.wallpaper_label)
-                .setSingleChoiceItems(labels, checked, (dialog, which) -> {
-                    dialog.dismiss();
+
+        GlassSelectionDialog dialog = new GlassSelectionDialog(
+                this,
+                getString(R.string.wallpaper_label),
+                "Select dynamic wallpaper backdrop for Aether TV",
+                labels,
+                checked,
+                (d, which) -> {
                     if (which == images.size()) {
                         choices.edit().putString(Config.WALLPAPER_CHOICE_KEY, "none").apply();
                     } else {
@@ -334,14 +346,14 @@ public final class LauncherSettingsActivity extends Activity {
                     changed();
                     Toast.makeText(this, R.string.wallpaper_applied, Toast.LENGTH_SHORT).show();
                     refresh();
-                })
-                .setNeutralButton(R.string.wallpaper_theme_default, (dialog, which) -> {
-                    choices.edit().remove(Config.WALLPAPER_CHOICE_KEY).apply();
-                    changed();
-                    refresh();
-                })
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
+                }
+        );
+        dialog.setNeutralButton(getString(R.string.wallpaper_theme_default), v -> {
+            choices.edit().remove(Config.WALLPAPER_CHOICE_KEY).apply();
+            changed();
+            refresh();
+        });
+        dialog.show();
     }
 
     private void showOpenOnStartPicker() {
@@ -364,19 +376,23 @@ public final class LauncherSettingsActivity extends Activity {
             labels[i + 1] = apps.get(i)[0];
             if (apps.get(i)[1].equals(current)) checked = i + 1;
         }
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.open_on_start_label)
-                .setSingleChoiceItems(labels, checked, (dialog, which) -> {
-                    dialog.dismiss();
+
+        GlassSelectionDialog dialog = new GlassSelectionDialog(
+                this,
+                getString(R.string.open_on_start_label),
+                "Launch selected app automatically when TV starts",
+                labels,
+                checked,
+                (d, which) -> {
                     if (which == 0) choices.edit().remove(OpenOnStart.KEY).apply();
                     else {
                         OpenOnStart.skipThisBoot(this);
                         choices.edit().putString(OpenOnStart.KEY, apps.get(which - 1)[1]).apply();
                     }
                     refresh();
-                })
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
+                }
+        );
+        dialog.show();
     }
 
     private String openOnStartLabel() {
@@ -437,13 +453,19 @@ public final class LauncherSettingsActivity extends Activity {
         }
 
         for (int i = 0; i < columnChoices.length; i++) {
-            columnChoices[i].setSelected(columns == i + 4);
+            boolean sel = (columns == i + 4);
+            columnChoices[i].setSelected(sel);
+            columnChoices[i].setTextColor(sel ? Color.parseColor("#FF00E5FF") : Color.parseColor("#CCFFFFFF"));
         }
         for (int i = 0; i < rowChoices.length; i++) {
-            rowChoices[i].setSelected(rowsBelowDock == i);
+            boolean sel = (rowsBelowDock == i);
+            rowChoices[i].setSelected(sel);
+            rowChoices[i].setTextColor(sel ? Color.parseColor("#FF00E5FF") : Color.parseColor("#CCFFFFFF"));
         }
         for (int i = 0; i < dockChoices.length; i++) {
-            dockChoices[i].setSelected(dockOpacity == DOCK_OPACITIES[i]);
+            boolean sel = (dockOpacity == DOCK_OPACITIES[i]);
+            dockChoices[i].setSelected(sel);
+            dockChoices[i].setTextColor(sel ? Color.parseColor("#FF00E5FF") : Color.parseColor("#CCFFFFFF"));
         }
         animationsChoice.setText(getString(R.string.animations_state,
                 getString(animations ? R.string.on : R.string.off)));

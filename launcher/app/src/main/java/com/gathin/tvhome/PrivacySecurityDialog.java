@@ -171,18 +171,21 @@ public final class PrivacySecurityDialog extends Dialog {
             }
         }
 
-        new AlertDialog.Builder(getContext())
-                .setTitle("Auto-Lock Inactivity Timeout")
-                .setSingleChoiceItems(TIMEOUT_LABELS, checked, (dialog, which) -> {
-                    dialog.dismiss();
+        GlassSelectionDialog dialog = new GlassSelectionDialog(
+                getContext(),
+                "Auto-Lock Inactivity Timeout",
+                "Automatically locks the launcher and requires PIN after idle duration",
+                TIMEOUT_LABELS,
+                checked,
+                (d, which) -> {
                     int chosen = TIMEOUT_MINUTES[which];
                     lockManager.setAutoRelockMinutes(chosen);
                     SoundManager.getInstance(getContext()).playSelect();
                     refreshUI();
                     if (listener != null) listener.onSecuritySettingsChanged();
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+                }
+        );
+        dialog.show();
     }
 
     @Override

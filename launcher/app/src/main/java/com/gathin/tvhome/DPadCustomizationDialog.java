@@ -255,19 +255,33 @@ public final class DPadCustomizationDialog extends Dialog {
         if (selectedKey == null) return;
         SoundManager.getInstance(getContext()).playDialogOpen();
 
-        new AlertDialog.Builder(getContext())
-                .setTitle("Select Action for " + selectedKey.name)
-                .setItems(ACTION_TITLES, (dialog, which) -> {
-                    dialog.dismiss();
+        int selectedIndex = -1;
+        String curAction = triggerType.equals("double") ? remapManager.getDoubleAction(selectedKey.id)
+                : triggerType.equals("triple") ? remapManager.getTripleAction(selectedKey.id)
+                : remapManager.getLongAction(selectedKey.id);
+        for (int i = 0; i < ACTION_IDS.length; i++) {
+            if (ACTION_IDS[i].equals(curAction)) {
+                selectedIndex = i;
+                break;
+            }
+        }
+
+        GlassSelectionDialog dialog = new GlassSelectionDialog(
+                getContext(),
+                "Action for " + selectedKey.name,
+                "Select action triggered on " + triggerType + " press",
+                ACTION_TITLES,
+                selectedIndex,
+                (d, which) -> {
                     String action = ACTION_IDS[which];
                     if (action.equals(KeyRemapManager.ACTION_OPEN_APP)) {
                         showAppPicker(triggerType);
                     } else {
                         saveAction(triggerType, action);
                     }
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+                }
+        );
+        dialog.show();
     }
 
     private void showAppPicker(String triggerType) {
@@ -300,16 +314,19 @@ public final class DPadCustomizationDialog extends Dialog {
             labels[i] = appEntries.get(i)[0];
         }
 
-        new AlertDialog.Builder(getContext())
-                .setTitle("Select App to Launch")
-                .setItems(labels, (dialog, which) -> {
-                    dialog.dismiss();
+        GlassSelectionDialog dialog = new GlassSelectionDialog(
+                getContext(),
+                "Select App to Launch",
+                "Choose application to open when button is triggered",
+                labels,
+                -1,
+                (d, which) -> {
                     String pkg = appEntries.get(which)[1];
                     String fullAction = KeyRemapManager.buildAppAction(pkg);
                     saveAction(triggerType, fullAction);
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+                }
+        );
+        dialog.show();
     }
 
     private void saveAction(String triggerType, String action) {
@@ -338,16 +355,19 @@ public final class DPadCustomizationDialog extends Dialog {
             }
         }
 
-        new AlertDialog.Builder(getContext())
-                .setTitle("Hold Threshold for " + selectedKey.name)
-                .setSingleChoiceItems(DURATION_LABELS, checked, (dialog, which) -> {
-                    dialog.dismiss();
+        GlassSelectionDialog dialog = new GlassSelectionDialog(
+                getContext(),
+                "Hold Threshold for " + selectedKey.name,
+                "Duration remote button must be held down to trigger long-press",
+                DURATION_LABELS,
+                checked,
+                (d, which) -> {
                     remapManager.setLongDurationMs(selectedKey.id, DURATIONS_MS[which]);
                     SoundManager.getInstance(getContext()).playSelect();
                     updateSelectedKeyUI();
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+                }
+        );
+        dialog.show();
     }
 
     @Override

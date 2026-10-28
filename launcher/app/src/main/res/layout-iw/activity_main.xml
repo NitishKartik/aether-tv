@@ -340,6 +340,7 @@
                 <TextView
                     android:id="@+id/btnSettings"
                     style="@style/TopButton"
+                    android:visibility="gone"
                     android:text="@string/settings"
                     android:drawableStart="@drawable/ic_settings"
                     android:nextFocusDown="@+id/grid" />

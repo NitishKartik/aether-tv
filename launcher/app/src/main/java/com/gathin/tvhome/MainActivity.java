@@ -897,9 +897,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 focusTile(singleRow ? lastFocused : lastFocused % COLUMNS);
                 return true;
             }
-            int firstButton = btnInputs.getVisibility() == View.VISIBLE ? R.id.btnInputs : firstTopButton().getId();
-            int leftButton = rtlMenuBar ? R.id.btnSettings : firstButton;
-            int rightButton = rtlMenuBar ? firstButton : R.id.btnSettings;
+            int firstButton = btnInputs != null && btnInputs.getVisibility() == View.VISIBLE ? R.id.btnInputs : firstTopButton().getId();
+            int endButton = (btnSettings != null && btnSettings.getVisibility() == View.VISIBLE) ? R.id.btnSettings : R.id.btnWifi;
+            int leftButton = rtlMenuBar ? endButton : firstButton;
+            int rightButton = rtlMenuBar ? firstButton : endButton;
             if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) return v.getId() == leftButton;
             return keyCode == KeyEvent.KEYCODE_DPAD_RIGHT && v.getId() == rightButton;
         };
@@ -913,7 +914,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             nowPlayingBanner.setOnKeyListener((v, keyCode, event) -> {
                 if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
                 if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-                    if (btnSettings != null) btnSettings.requestFocus();
+                    if (btnSettings != null && btnSettings.getVisibility() == View.VISIBLE) {
+                        btnSettings.requestFocus();
+                    } else if (btnWifi != null && btnWifi.getVisibility() == View.VISIBLE) {
+                        btnWifi.requestFocus();
+                    }
                     return true;
                 }
                 if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
@@ -2652,7 +2657,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             View button = bar.getChildAt(i);
             if (button != btnInputs && button.getVisibility() == View.VISIBLE) return button;
         }
-        return findViewById(R.id.btnSettings);
+        return btnWifi != null ? btnWifi : findViewById(R.id.btnSettings);
     }
 
     /** top_bar_apps buttons, in bar order. */

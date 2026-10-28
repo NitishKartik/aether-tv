@@ -107,6 +107,13 @@ public final class ControlCenterDialog extends Dialog {
         panelHeaderTitle.setText("Display & Visuals");
         panelDescription.setText("Configure TV resolution, screensaver timeouts, and ambient themes.");
 
+        addActionCard("⚙️ Launcher Settings", "Configure macOS lockscreen, D-Pad buttons, screensaver, and dock layout", v -> {
+            dismiss();
+            try {
+                getContext().startActivity(new Intent(getContext(), LauncherSettingsActivity.class));
+            } catch (Exception ignored) {}
+        });
+
         addActionCard("📺 Android Display Settings", "Adjust resolution, aspect ratio, and HDR settings", v -> {
             launchSystemIntent(Settings.ACTION_DISPLAY_SETTINGS);
         });
